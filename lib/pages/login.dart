@@ -1,5 +1,7 @@
+import 'package:bankapp/controller/api.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home.dart';
 
@@ -11,22 +13,25 @@ class Login extends StatefulWidget {
 }
 
 class _Login extends State<Login> {
+  read() async {
+  final prefs = await SharedPreferences.getInstance();
+  final key = 'token';
+  final value = prefs.get(key) ?? 0;
+  if (value != '0') {
+    Navigator.of(context).push(new MaterialPageRoute(
+      builder: (BuildContext context) => new HomePage(),
+    ));
+  }
+}
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
-
-  String? validatePassword(String value) {
-    if (value.isEmpty) {
-      return "* Required";
-    } else if (value.length < 6) {
-      return "Password should be atleast 6 characters";
-    } else if (value.length > 15) {
-      return "Password should not be greater than 15 characters";
-    } else
-      return null;
-  }
+  String message='';
 
   @override
+  initState() {
+    read();
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromARGB(237, 237, 237, 245),
@@ -47,12 +52,16 @@ class _Login extends State<Login> {
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Email/Username',
-                        hintText: 'Enter valid email id as abc@gmail.com'),
-                    validator: MultiValidator([
-                      RequiredValidator(errorText: "* Required"),
-                      //EmailValidator(errorText: "Enter valid email id"),
-                    ])),
+                        hintText: 'Enter valid username'),
+                    validator: (value){
+                    if(value!.isEmpty){
+                      return "Required";
+                    }
+                    },
+
+                ),
               ),
+              SizedBox(height: 15,),
               Padding(
                 padding: const EdgeInsets.only(
                     left: 15.0, right: 15.0, top: 15, bottom: 0),
@@ -63,25 +72,29 @@ class _Login extends State<Login> {
                         border: OutlineInputBorder(),
                         labelText: 'Password',
                         hintText: 'Enter secure password'),
-                    validator: MultiValidator([
-                      RequiredValidator(errorText: "* Required"),
-                      MinLengthValidator(6,
-                          errorText: "Password should be atleast 6 characters"),
-                      MaxLengthValidator(15,
-                          errorText:
-                          "Password should not be greater than 15 characters")
-                    ])
+                  validator: (value){
+                    if(value!.isEmpty){
+                      return "Required";
+                    }else if(value.length < 6){
+                      return "Password too short";
+                    }
+                  },
                   //validatePassword,        //Function to check validation
                 ),
               ),
               FlatButton(
                 onPressed: () {
                   //TODO FORGOT PASSWORD SCREEN GOES HERE
+
                 },
                 child: Text(
                   'Forgot Password',
                   style: TextStyle(color: Colors.blue, fontSize: 15),
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(child: Text(message)),
               ),
               Container(
                 height: 50,
@@ -91,12 +104,24 @@ class _Login extends State<Login> {
                     borderRadius: BorderRadius.circular(20)),
                 child: FlatButton(
                   onPressed: () {
+                    setState(() {
+                      message = "Please wait";
+                    });
                     if (formkey.currentState!.validate()) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => HomePage()));
-                      print("Validated");
+                      var uname = username.text;
+                      var upass = password.text;
+                      AuthController auth = new AuthController();
+                      (auth.loginUser(uname, upass));
+
+                      //print(uname);
+                      // Navigator.push(context,
+                      //     MaterialPageRoute(builder: (_) => HomePage()));
+                      // print("Validated");
+                      //Navigator.pushReplacementNamed(context, '/dashboard');
                     } else {
-                      print("Not Validated");
+                    setState(() {
+                    message = "";
+                    });
                     }
                   },
                   child: Text(

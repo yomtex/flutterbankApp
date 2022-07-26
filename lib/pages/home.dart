@@ -1,8 +1,10 @@
+import 'package:bankapp/controller/api.dart';
 import 'package:bankapp/pages/profile.dart';
 import 'package:bankapp/pages/transaction.dart';
 import 'package:bankapp/util/income_card.dart';
 import 'package:bankapp/util/wallet.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../util/my_card.dart';
@@ -20,6 +22,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _controller = PageController();
+    AuthController authUser = new AuthController();
+    //saved token
+  _save(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'token';
+    final value = token;
+    prefs.setString(key, value);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
