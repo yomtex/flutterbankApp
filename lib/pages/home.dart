@@ -6,15 +6,21 @@ import 'package:bankapp/util/wallet.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-
 import '../util/my_card.dart';
 import '../util/navbar.dart';
 import '../util/transactions.dart';
 import 'all_cards.dart';
+import 'login.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class HomePage extends StatefulWidget {
   Widget build(BuildContext context) => Drawer();
-  const HomePage({Key? key}) : super(key: key);
+  final email;
+  final username;
+  final msg;
+  final walletbal;
+   HomePage({Key? key, this.email, this.username, this.msg, this.walletbal}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -22,17 +28,23 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _controller = PageController();
-    AuthController authUser = new AuthController();
-    //saved token
-  _save(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'token';
-    final value = token;
-    prefs.setString(key, value);
-  }
 
-
+  late SharedPreferences sharedPreferences;
   @override
+  void iniState(){
+    super.initState();
+    checkLoginStatus();
+    getCurrentUser();
+  }
+  checkLoginStatus()async{
+    sharedPreferences = await SharedPreferences.getInstance();
+    if(sharedPreferences.getString("token")==null){
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=>Login()), (Route<dynamic> route) => false);
+    }else{
+      String? token  = sharedPreferences.getString("token");
+      print (token);
+    }
+  }
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -106,11 +118,13 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.settings),
+              icon: const Icon(Icons.logout),
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('You pressed bell icon.')));
-              },
+
+                sharedPreferences.clear();
+                sharedPreferences.commit();
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Login()), (Route<dynamic> route) => false);
+                },
             ),
           ],
         ),
@@ -361,14 +375,14 @@ class _HomePageState extends State<HomePage> {
                   //     color: Colors.green,
                   //   ),
                   // ),
-                  // Container(
-                  //   margin: EdgeInsets.symmetric(vertical: 10),
-                  //   height: 300,
-                  //   width: MediaQuery.of(context).size.width,
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.yellow,
-                  //   ),
-                  // ),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 10),
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: Colors.yellow,
+                    ),
+                  ),
+                  //Container(child: getCurrentUser(),)
                 ],
               ),
             ),
@@ -376,5 +390,25 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+
   }
+
+getCurrentUser()async{
+    String serverUrl = "http://laravel.teletradeoptions.com/api";
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'token';
+    final value = prefs.get(key ) ?? 0;
+
+    String myUrl = "$serverUrl/user";
+    http.Response response = await http.get(myUrl,
+        headers: {
+          'Accept':'application/json',
+          'Authorization' : 'Bearer $value'
+        });
+    print (json.decode(response.body));
+  }
+
 }
+
+
+

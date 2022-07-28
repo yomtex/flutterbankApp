@@ -19,14 +19,15 @@ class AuthController{
           "username": email,
           "password" : password
         });
-    status = response.body.contains('msg');
+    status = response.body;
     var data = json.decode(response.body);
 
-    if(status){
+    if(data["msg"] == "success"){
       print('data : ${data["token"]}');
       _save(data["token"]);
+      return "1";
     }else{
-      print("invalid");
+     return "invalid details";
     }
   }
 //Saving token per login
