@@ -14,37 +14,138 @@ import 'login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class HomePage extends StatefulWidget {
-  Widget build(BuildContext context) => Drawer();
+
+
+//Creating a class user to store the data;
+class User {
   final email;
   final username;
-  final msg;
+  final userid;
   final walletbal;
-   HomePage({Key? key, this.email, this.username, this.msg, this.walletbal}) : super(key: key);
+  User({
+    required this.email,
+    required this.username,
+    required this.walletbal,
+    required this.userid,
+  });
+}
+
+
+
+class HomePage extends StatefulWidget {
+  Widget build(BuildContext context) => Drawer();
+   HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+
+  //Applying get request.
+
+  Future<List<User>> getRequest() async {
+    //replace your restFull API here.
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String url = "http://laravel.teletradeoptions.com/api/auth/user-profile";
+    var token = sharedPreferences.getString("token");
+    final response = await http.get(
+        url, headers: {"Authorization": "Bearer $token"});
+
+    var responseData = jsonDecode(response.body)["data"];
+    //print(responseData);
+    if (response.statusCode == 200) {
+      //Creating a list to store input data;
+      //List<User> users = [];
+
+      print(responseData["name"]);
+      print(responseData["email"]);
+     return  responseData["data"];
+
+      // User myuser = User(
+      //   email: repdata["name"],
+      //   userid: repdata["email"],
+      //   walletbal: repdata["walletBalance"],
+      //   username: repdata["username"],
+      // );
+      // users.add(myuser);
+      // for (var singleUser in responseData) {
+      //
+      //   User user = User(
+      //       email: singleUser["email"],
+      //       userid: singleUser["userid"],
+      //       walletbal: singleUser["walletBalance"],
+      //       username: singleUser["username"]);
+      //
+      //   // Adding user to the list.
+      //   users.add(user);
+      // }
+      //print(users);
+      //return users;
+    } else {
+      return logout();
+    }
+  }
+
+  getUser() async {
+    String serverUrl = "http://laravel.teletradeoptions.com/api/auth/user-profile";
+    SharedPreferences sharedPreferences = await SharedPreferences
+        .getInstance();
+    if (sharedPreferences.getString("token") == null) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (BuildContext context) => Login()), (
+          Route<dynamic> route) => false);
+    } else {
+      var token = sharedPreferences.getString("token");
+      var response = await http.get(
+          serverUrl, headers: {"Authorization": "Bearer $token"});
+      if (response.statusCode == "500") {
+        print("unauthorized");
+      } else {
+        print(response.body);
+      }
+    }
+  }
+
+  logout() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String url = "http://laravel.teletradeoptions.com/api/auth/logout";
+    var token = preferences.getString("token");
+    final response = await http.get(
+        url, headers: {"Authorization": "Bearer $token"});
+
+
+    await preferences.remove('token');
+    //
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (BuildContext context) => Login()), (
+        Route<dynamic> route) => false);
+  }
+
   final _controller = PageController();
 
   late SharedPreferences sharedPreferences;
+
   @override
-  void iniState(){
+  void iniState() {
     super.initState();
     checkLoginStatus();
-    getCurrentUser();
+    getRequest();
   }
-  checkLoginStatus()async{
+
+  checkLoginStatus() async {
     sharedPreferences = await SharedPreferences.getInstance();
-    if(sharedPreferences.getString("token")==null){
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=>Login()), (Route<dynamic> route) => false);
-    }else{
-      String? token  = sharedPreferences.getString("token");
-      print (token);
+    if (sharedPreferences.getString("token") == null) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (BuildContext context) => Login()), (
+          Route<dynamic> route) => false);
+    } else {
+      String? token = sharedPreferences.getString("token");
+      print(token);
     }
   }
+
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -120,11 +221,12 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () {
-
                 sharedPreferences.clear();
                 sharedPreferences.commit();
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Login()), (Route<dynamic> route) => false);
-                },
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                    builder: (BuildContext context) => Login()), (
+                    Route<dynamic> route) => false);
+              },
             ),
           ],
         ),
@@ -146,10 +248,13 @@ class _HomePageState extends State<HomePage> {
                   Container(
                     //main widget holding the position and distaince from red is too
                     height: 235,
-                    width: MediaQuery.of(context).size.width,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width,
                     decoration: BoxDecoration(
-                        //color: Colors.purple,
-                        ),
+                      //color: Colors.purple,
+                    ),
                     child: Stack(
                       children: <Widget>[
                         Positioned(
@@ -160,7 +265,10 @@ class _HomePageState extends State<HomePage> {
                             decoration: BoxDecoration(
                               color: Colors.purple,
                             ),
-                            width: MediaQuery.of(context).size.width,
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width,
                             //The widget the card float on
                             height: 100.0,
                           ),
@@ -184,7 +292,10 @@ class _HomePageState extends State<HomePage> {
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.white,
                             ),
-                            width: MediaQuery.of(context).size.width,
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width,
                             //height: 200.0,
                           ),
                         ),
@@ -205,20 +316,26 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                       // height: 180,
-                      width: MediaQuery.of(context).size.width,
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width,
                       decoration: BoxDecoration(
-                          //Widget holding Income and Expenses stuff
-                          //color: Colors.cyan,
-                          ),
+                        //Widget holding Income and Expenses stuff
+                        //color: Colors.cyan,
+                      ),
                     ),
                   ),
                   SizedBox(height: 40),
                   Container(
-                    width: MediaQuery.of(context).size.width,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width,
                     decoration: BoxDecoration(
-                        //Transaction widget
-                        //color: Colors.orange,
-                        ),
+                      //Transaction widget
+                      //color: Colors.orange,
+                    ),
                     child: Column(
                       children: [
                         Row(
@@ -250,10 +367,13 @@ class _HomePageState extends State<HomePage> {
                     height: 10,
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width,
                     decoration: BoxDecoration(
-                        //color: Colors.pink,
-                        ),
+                      //color: Colors.pink,
+                    ),
                     child: Column(
                       children: [
                         Column(
@@ -288,7 +408,7 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Padding(
                             padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            const EdgeInsets.symmetric(horizontal: 10.0),
                             child: Text(
                               "My Cards",
                               style: TextStyle(
@@ -298,7 +418,7 @@ class _HomePageState extends State<HomePage> {
                           Padding(
                             //debit card widget
                             padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            const EdgeInsets.symmetric(horizontal: 10.0),
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -321,10 +441,13 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Container(
                     height: 200,
-                    width: MediaQuery.of(context).size.width,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width,
                     decoration: BoxDecoration(
-                        //color: Colors.red,
-                        ),
+                      //color: Colors.red,
+                    ),
                     child: PageView(
                       scrollDirection: Axis.horizontal,
                       controller: _controller,
@@ -368,20 +491,92 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(
                     height: 30,
                   ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                    FutureBuilder<List<User>>(future: getRequest(), builder: (context, snapshot){
+                      if(snapshot.connectionState == ConnectionState.waiting){
+                        return Expanded(
+                            child: Center(child: CircularProgressIndicator(),));
+                      }else if(snapshot.hasData){
+                        List<User> _users = snapshot.data!;
+                        return Flexible(
+
+                            child: Container(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount:_users.length ,
+                                itemBuilder: (context,index)=>_users[index].email,
+                              ),
+                            ));
+                      }
+                      else{return Text("");}
+                    })
+                  ],),
+                  Container(
+                    // child: FutureBuilder(
+                    //   future: getUser(),
+                    //   builder: (context, snapshot) {
+                    //     final employees = snapshot.data;
+                    //     if (snapshot.connectionState == ConnectionState.done) {
+                    //       return ListView.separated(
+                    //         separatorBuilder: (context, index) {
+                    //           return Divider(
+                    //             height: 2,
+                    //             color: Colors.black,
+                    //           );
+                    //         },
+                    //         itemBuilder: (context, index) {
+                    //           return ListTile(
+                    //             title: Text(employees[index]['email']),
+                    //             subtitle: Text(
+                    //                 'Age: ${employees[index]['username']}'),
+                    //           );
+                    //         },
+                    //         itemCount: snapshot.data.length,
+                    //       );
+                    //     }
+                    //     return Center(
+                    //       child: CircularProgressIndicator(),
+                    //     );
+                    //   },
+                    // ),
+                    height: 300,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                    ),
+                  ),
                   // Container(
-                  //   height: 300,
-                  //   width: MediaQuery.of(context).size.width,
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.green,
+                  //   padding: EdgeInsets.all(16.0),
+                  //   child: FutureBuilder(
+                  //     future: getRequest(),
+                  //     builder: (BuildContext ctx, AsyncSnapshot snapshot) {
+                  //       if (snapshot.data == null) {
+                  //         return Container(
+                  //           child: Center(
+                  //             child: CircularProgressIndicator(),
+                  //           ),
+                  //         );
+                  //       } else {
+                  //         return Container(child:
+                  //         ListView.builder(
+                  //             itemCount: snapshot.data.length,
+                  //             itemBuilder: (context, index) =>
+                  //             ListTile(
+                  //               title: Text(snapshot.data[index].edmail),)));
+                  //       }
+                  //     },
                   //   ),
                   // ),
                   Container(
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      color: Colors.yellow,
-                    ),
-                  ),
+                    height: 200,
+                    child: IconButton(icon: Icon(Icons.add,), onPressed: () {
+                      logout();
+                    },),),
                   //Container(child: getCurrentUser(),)
                 ],
               ),
@@ -390,25 +585,38 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-
-  }
-
-getCurrentUser()async{
-    String serverUrl = "http://laravel.teletradeoptions.com/api";
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'token';
-    final value = prefs.get(key ) ?? 0;
-
-    String myUrl = "$serverUrl/user";
-    http.Response response = await http.get(myUrl,
-        headers: {
-          'Accept':'application/json',
-          'Authorization' : 'Bearer $value'
-        });
-    print (json.decode(response.body));
-  }
-
-}
+    //
+    // }Container(
+    // child:new  ListView.builder(
+    // itemCount: snapshot.data.length,
+    // itemBuilder: (ctx, index) => ListTile(
+    // title: Text(snapshot.data[index].email),
+    // subtitle: Text(snapshot.data[index].username),
+    // contentPadding: EdgeInsets.only(bottom: 20.0),
+    // ),
+    // ),
+    // );
 
 
+//fetching user record
+// class User{
+//   String userid;
+//   String username, email, walletBalance,isPrivate,firstName,lastName;
+//
+//   User({required this.userid, required this.email, required this.walletBalance, required this.isPrivate, required this.firstName, required this.lastName, required this.username});
+//
+//   factory User.fromJson(Map<String, dynamic> json){
+//     return User(
+//       userid: json['userid'],
+//       email: json['email'],
+//       username: json['username'],
+//       walletBalance: json['birth_date'],
+//       isPrivate: json['gender'],
+//       firstName: json['birth_date'],
+//       lastName: json['birth_date'],
+//
+//     );
+//   }
+// }
 
+  }}

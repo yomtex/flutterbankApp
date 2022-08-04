@@ -4,9 +4,10 @@ import '../formats/custom_fmt.dart';
 
 class Nav_balance extends StatelessWidget {
   final my_color = Color.fromARGB(255, 229, 197, 235);
-  final double balance;
+  final  balance;
   final font_size = 15;
-  Nav_balance({Key? key, required this.balance}) : super(key: key);
+  final currency;
+  Nav_balance({Key? key, required this.balance, this.currency}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,8 @@ class Nav_balance extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  fmtCurrency(balance, '\$ ', 2),
+                  // fmtCurrency(balance, '\$ ', 2),
+                      '$currency $balance',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 25,

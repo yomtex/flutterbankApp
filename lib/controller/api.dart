@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController{
-  String serverUrl = "http://laravel.teletradeoptions.com/api";
+  String serverUrl = "http://laravel.teletradeoptions.com/api/auth";
   var status ;
 
   var token ;

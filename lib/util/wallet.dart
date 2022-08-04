@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Wallet extends StatelessWidget {
-  const Wallet({Key? key}) : super(key: key);
+  final walletBalance;
+  final currencey;
+  const Wallet({Key? key, this.walletBalance, this.currencey}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class Wallet extends StatelessWidget {
           children: [
             Container(
               child: Text(
-                "\$ 5,310.40",
+                "$currencey $walletBalance",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23),
               ),
             ),
@@ -51,7 +53,7 @@ class Wallet extends StatelessWidget {
           ],
         ),
         SizedBox(
-          height: 16,
+          height: 15,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -69,22 +71,17 @@ class Wallet extends StatelessWidget {
                             color: Colors.red),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 17),
-                          child: Text(
-                            "Send",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
+                              horizontal: 15, vertical: 15),
+                          child:Icon(
+                            Icons.arrow_downward,
+                            color: Colors.white,
                           ),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Icon(
-                          Icons.arrow_forward,
-                          color: Colors.black,
-                        ),
-                      )
+                        child: Text("Withdraw"),
+                      ),
                     ],
                   ),
                 ),
@@ -103,22 +100,17 @@ class Wallet extends StatelessWidget {
                             color: Colors.purple),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 17),
-                          child: Text(
-                            "Receive",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
+                              horizontal: 15, vertical: 15),
+                          child:Icon(
+                            Icons.arrow_forward,
+                            color: Colors.white,
                           ),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Icon(
-                          Icons.arrow_downward,
-                          color: Colors.black,
-                        ),
-                      )
+                        child: Text("Send"),
+                      ),
                     ],
                   ),
                 ),
@@ -137,22 +129,46 @@ class Wallet extends StatelessWidget {
                             color: Colors.green),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 17),
-                          child: Text(
-                            "Card",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
+                              horizontal: 15, vertical: 15),
+                          child:Icon(
+                            Icons.credit_card,
+                            color: Colors.white,
                           ),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Icon(
-                          Icons.credit_card,
-                          color: Colors.black,
+                        child: Text("Cards"),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 0),
+              child: Container(
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.red),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 15),
+                          child:Icon(
+                            Icons.history,
+                            color: Colors.white,
+                          ),
                         ),
-                      )
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("Recent"),
+                      ),
                     ],
                   ),
                 ),

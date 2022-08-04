@@ -4,15 +4,16 @@ import '../formats/custom_fmt.dart';
 import 'nav_balance.dart';
 
 class Navbar extends StatelessWidget {
+  final firstname, lastname;
   final my_color = Color.fromARGB(255, 229, 197, 235);
-  final double balance;
+  final  balance,currency,username;
   final font_size = 15;
-  Navbar({Key? key, required this.balance}) : super(key: key);
+  Navbar({Key? key, required this.balance, this.firstname, this.lastname, this.currency, this.username}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.purple,
       child: ListView(
         children: [
           SizedBox(
@@ -46,16 +47,16 @@ class Navbar extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Full Name",
+                                  "$firstname $lastname",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 17),
+                                      fontSize: 20),
                                 ),
                                 SizedBox(
                                   height: 3,
                                 ),
                                 Text(
-                                  "409802",
+                                  "$username",
                                   style: TextStyle(fontSize: 17),
                                 ),
                               ],
@@ -75,7 +76,8 @@ class Navbar extends StatelessWidget {
                   children: [
                     //
                     Nav_balance(
-                      balance: 54204.78,
+                      currency: "$currency",
+                      balance:"$balance",
                     ),
                   ],
                 ),
@@ -84,6 +86,7 @@ class Navbar extends StatelessWidget {
                 height: 10,
               ),
               Container(
+                decoration: BoxDecoration(color: Colors.white),
                 child: ListTile(
                   visualDensity: VisualDensity(vertical: 0),
                   title: Column(

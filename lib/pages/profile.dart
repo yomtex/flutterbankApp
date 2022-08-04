@@ -1,5 +1,8 @@
+import 'package:bankapp/pages/dashboard.dart';
 import 'package:bankapp/pages/transaction.dart';
+import 'package:bankapp/util/user_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:custom_switch/custom_switch.dart';
 
 import 'home.dart';
 
@@ -11,6 +14,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  bool isSwitched = false;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -32,7 +36,7 @@ class _ProfileState extends State<Profile> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
+                      MaterialPageRoute(builder: (context) => Dashboard()),
                     );
                   },
                 ),
@@ -87,6 +91,7 @@ class _ProfileState extends State<Profile> {
                 SizedBox(
                   height: 30,
                 ),
+
                 Container(
                   child: CircleAvatar(
                     child: ClipOval(
@@ -131,15 +136,21 @@ class _ProfileState extends State<Profile> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
+
                                   Text(
-                                    "Change Username",
+                                    "Bio",
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 18,
                                     ),
                                   ),
                                   IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) => const UserTransfer()
+                                        );
+                                      },
                                       icon: Icon(
                                         Icons.arrow_forward_ios,
                                         size: 20,
@@ -164,7 +175,7 @@ class _ProfileState extends State<Profile> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Update E-mail",
+                                    "E-mail",
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 18,
@@ -185,10 +196,6 @@ class _ProfileState extends State<Profile> {
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: Container(
                             width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                                border: Border(
-                                    bottom: BorderSide(
-                                        width: 1, color: Colors.grey))),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               child: Row(
@@ -316,7 +323,7 @@ class _ProfileState extends State<Profile> {
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Log out all devices",
@@ -344,7 +351,67 @@ class _ProfileState extends State<Profile> {
                         borderRadius: BorderRadius.circular(15)),
                   ),
                 ),
-                SizedBox(height: 30,)
+                SizedBox(height: 30,),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 25),
+                  child: Text(
+                    "Account Type",
+                    style: TextStyle(color: Colors.grey[900], fontSize: 18),
+                  ),
+                ),
+
+                Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              child: Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Private",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  CustomSwitch(
+                                    value:isSwitched,
+                                    activeColor: Colors.purple,
+                                    onChanged: (value){
+                                      print(value);
+                                      setState((){
+                                        isSwitched = value;
+                                      });
+                                    },//
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+
+                      ],
+                    ),
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15)),
+                  ),
+                ),
+
+                SizedBox(height: 20,),
+                Text("Value : $isSwitched"),
+                SizedBox(height: 30,),
+
               ],
             ),
           ),

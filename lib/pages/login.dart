@@ -1,11 +1,7 @@
-import 'dart:io';
-
-import 'package:bankapp/controller/api.dart';
 import 'package:flutter/material.dart';
-import 'package:form_field_validator/form_field_validator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'home.dart';
+import 'dashboard.dart';
 import 'dart:convert';
 
 //import 'HomePage.dart';
@@ -54,12 +50,12 @@ class _Login extends State<Login> {
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
-                  SizedBox(height: MediaQuery.of(context).size.height/8,),
+                  SizedBox(height: MediaQuery.of(context).size.height/7,),
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Text(
                       "Sign In",
-                      style: TextStyle(color: Colors.purple, fontSize: 25, fontFamily: 'times new roman'),
+                      style: TextStyle(color: Colors.purple, fontSize: 35, fontFamily: 'times new roman'),
                     ),
                   ),
                   Form(
@@ -172,6 +168,7 @@ class _Login extends State<Login> {
 
     String serverUrl = "http://laravel.teletradeoptions.com/api/auth/login";
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.clear();
     Map data = {
       'username':username,
       'password':upass
@@ -187,8 +184,9 @@ class _Login extends State<Login> {
      var decode = jsonDecode(response.body);
      var msg= decode["msg"];
      if(msg == "success"){
-       getUser();
+       //getUser();
        setState((){
+         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=>Dashboard()), (Route<dynamic> route) => false);
          message = "";
          _isLoading = false;
        });
@@ -214,6 +212,7 @@ getUser()async{
     var token  = sharedPreferences.getString("token");
     var response = await http.get(serverUrl, headers: {"Authorization": "Bearer $token"});
     print(response.body);
+
   }
 
 }
