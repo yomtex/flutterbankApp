@@ -7,12 +7,14 @@ import 'dart:convert';
 //import 'HomePage.dart';
 
 class Login extends StatefulWidget {
+  const Login({Key? key}) : super(key: key);
+
   @override
   _Login createState() => _Login();
 }
 
 class _Login extends State<Login> {
- bool _isLoading = false;
+  bool _isLoading = false;
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
@@ -36,14 +38,14 @@ class _Login extends State<Login> {
           child:_isLoading ? Column(
             children: [
               SizedBox(height: MediaQuery.of(context).size.height/2.2,),
-               Row(
-                 mainAxisAlignment: MainAxisAlignment.center,
-                 children: [
-                   CircularProgressIndicator(
-                     valueColor: AlwaysStoppedAnimation<Color>(Colors.purple),
-                   ),
-                 ],
-               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.purple),
+                  ),
+                ],
+              ),
             ],
           ): Container(
             child: Padding(
@@ -51,8 +53,8 @@ class _Login extends State<Login> {
               child: Column(
                 children: [
                   SizedBox(height: MediaQuery.of(context).size.height/7,),
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
+                  const Padding(
+                    padding: EdgeInsets.all(20.0),
                     child: Text(
                       "Sign In",
                       style: TextStyle(color: Colors.purple, fontSize: 35, fontFamily: 'times new roman'),
@@ -66,15 +68,15 @@ class _Login extends State<Login> {
                           padding: EdgeInsets.symmetric(horizontal: 15),
                           child: TextFormField(
                             controller: username,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Email/Username',
-                                  hintText: 'Enter valid username'),
-                              validator: (value){
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Email/Username',
+                                hintText: 'Enter valid username'),
+                            validator: (value){
                               if(value!.isEmpty){
                                 return "Required";
                               }
-                              },
+                            },
 
                           ),
                         ),
@@ -84,11 +86,11 @@ class _Login extends State<Login> {
                               left: 15.0, right: 15.0, top: 15, bottom: 0),
                           child: TextFormField(
                             controller: password,
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Password',
-                                  hintText: 'Enter secure password'),
+                            obscureText: true,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Password',
+                                hintText: 'Enter secure password'),
                             validator: (value){
                               if(value!.isEmpty){
                                 return "Required";
@@ -99,7 +101,7 @@ class _Login extends State<Login> {
                             //validatePassword,        //Function to check validation
                           ),
                         ),
-                        FlatButton(
+                        TextButton(
                           onPressed: () {
                             //TODO FORGOT PASSWORD SCREEN GOES HERE
 
@@ -136,10 +138,10 @@ class _Login extends State<Login> {
                                 // print("Validated");
                                 //Navigator.pushReplacementNamed(context, '/dashboard');
                               } else {
-                              setState(() {
-                                _isLoading=false;
-                              message = "";
-                              });
+                                setState(() {
+                                  _isLoading=false;
+                                  message = "";
+                                });
                               }
                             },
                             child: Text(
@@ -166,7 +168,7 @@ class _Login extends State<Login> {
 
   signIn(String username,upass)async{
 
-    String serverUrl = "http://laravel.teletradeoptions.com/api/auth/login";
+    var serverUrl = Uri.parse("https://laravel.teletradeoptions.com/api/auth/login");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.clear();
     Map data = {
@@ -179,42 +181,42 @@ class _Login extends State<Login> {
     if(response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
       //print('data : ${response.body}');
-     //print('data : ${response.body}');
-     print(response.body);
-     var decode = jsonDecode(response.body);
-     var msg= decode["msg"];
-     if(msg == "success"){
-       //getUser();
-       setState((){
-         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=>Dashboard()), (Route<dynamic> route) => false);
-         message = "";
-         _isLoading = false;
-       });
-       sharedPreferences.setString("token", decode["token"]);
-      //
-       //
-     }else{
-       setState((){
-         message = "invalid credentials";
-         _isLoading = false;
-       });
-     }
+      //print('data : ${response.body}');
+      print(response.body);
+      var decode = jsonDecode(response.body);
+      var msg= decode["msg"];
+      if(msg == "success"){
+        //getUser();
+        setState((){
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=>Dashboard()), (Route<dynamic> route) => false);
+          message = "";
+          _isLoading = false;
+        });
+        sharedPreferences.setString("token", decode["token"]);
+        //
+        //
+      }else{
+        setState((){
+          message = "invalid credentials";
+          _isLoading = false;
+        });
+      }
 
-  }
-  }
-
-getUser()async{
-  String serverUrl = "http://laravel.teletradeoptions.com/api/auth/user-profile";
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  if(sharedPreferences.getString("token")==null){
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=>Login()), (Route<dynamic> route) => false);
-  }else{
-    var token  = sharedPreferences.getString("token");
-    var response = await http.get(serverUrl, headers: {"Authorization": "Bearer $token"});
-    print(response.body);
-
+    }
   }
 
-}
+  getUser()async{
+    var serverUrl = Uri.parse("http://laravel.teletradeoptions.com/api/auth/user-profile");
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    if(sharedPreferences.getString("token")==null){
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=>Login()), (Route<dynamic> route) => false);
+    }else{
+      var token  = sharedPreferences.getString("token");
+      var response = await http.get(serverUrl, headers: {"Authorization": "Bearer $token"});
+      print(response.body);
+
+    }
+
+  }
 
 }

@@ -4,7 +4,6 @@ import 'package:bankapp/util/user_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:custom_switch/custom_switch.dart';
 
-import 'home.dart';
 
 class Profile extends StatefulWidget {
   Profile({Key? key}) : super(key: key);

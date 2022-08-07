@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../formats/custom_fmt.dart';
 
 class Income extends StatelessWidget {
-  final double income_amt, expenses;
+  final String income_amt, expenses;
   const Income({Key? key, required this.income_amt, required this.expenses})
       : super(key: key);
 

@@ -1,33 +1,19 @@
+import 'package:bankapp/formats/custom_fmt.dart';
 import 'package:bankapp/pages/profile.dart';
 import 'package:bankapp/pages/transaction.dart';
+import 'package:bankapp/util/income_card.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../controller/login_status.dart';
 import '../util/navbar.dart';
 import '../util/transactions.dart';
 import '../util/user_dialog.dart';
 import '../util/wallet.dart';
 import 'login.dart';
-
-//
-
-//Creating a class user to store the data;
-// class UserModel {
-//   final email;
-//   final username;
-//   final userid;
-//   final walletbal;
-//   UserModel({
-//     required this.email,
-//     required this.username,
-//     required this.walletbal,
-//     required this.userid,
-//   });
-//
-// }//
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -37,7 +23,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  Map mapResponse = new Map();
+  Map mapResponse = {};
   bool isNull = false;
   bool _isLoading = true;
   Future getData() async {
@@ -46,23 +32,23 @@ class _DashboardState extends State<Dashboard> {
     //final value = prefs.get(key ) ?? 0;
     if (prefs == null) {
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => Login()),
+          MaterialPageRoute(builder: (BuildContext context) => const Login()),
           (Route<dynamic> route) => false);
     } else {
-      String url = "http://laravel.teletradeoptions.com/api/auth/user-profile";
+      var url = Uri.parse("https://laravel.teletradeoptions.com/api/auth/user-profile");
       http.Response response = await http.get(url, headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer $prefs'
       });
 
-      var responsedata = json.decode(response.body);
-      var errMsg = (responsedata["message"]);
+      //var responsedata = json.decode(response.body);
+      //var errMsg = (responsedata["message"]);
       if (!(response.statusCode >= 200 && response.statusCode <= 299)) {
         //means user logged out or session expires
         //return user to login page
         sharedPreferences.remove("token");
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (BuildContext context) => Login()),
+            MaterialPageRoute(builder: (BuildContext context) => const Login()),
             (Route<dynamic> route) => false);
       } else {
         var data = json.decode(response.body)["data"];
@@ -84,8 +70,13 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     getData();
     super.initState();
+
+    var checkstatus = LoginStatus();
+    var _active = checkstatus.status();
+    print(_active);
   }
 
+  @override
   Widget build(BuildContext context) {
     return _isLoading
         ? Scaffold(
@@ -94,7 +85,7 @@ class _DashboardState extends State<Dashboard> {
           SizedBox(height: MediaQuery.of(context).size.height/2.2,),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: const [
               CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.purple),
               ),
@@ -106,12 +97,12 @@ class _DashboardState extends State<Dashboard> {
         : Scaffold(
         drawer: _isLoading
             ? Container(
-                child: CircularProgressIndicator(),
+                child: const CircularProgressIndicator(),
               )
             : Navbar(
                 firstname: mapResponse["name"].toString(),
                 lastname: mapResponse["lastname"].toString(),
-                balance: mapResponse["walletBalance"].toString(),
+                balance: fmtCurrency(mapResponse["walletBalance"].toString(),'', 2),
                 currency: mapResponse["userCurrency"].toString(),
                 username: mapResponse["username"].toString(),
               ),
@@ -123,7 +114,7 @@ class _DashboardState extends State<Dashboard> {
               Padding(
                 padding: const EdgeInsets.all(0.0),
                 child: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.home,
                     size: 30,
                     color: Colors.purple,
@@ -134,7 +125,7 @@ class _DashboardState extends State<Dashboard> {
               Padding(
                 padding: const EdgeInsets.all(0.0),
                 child: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.history,
                     size: 30,
                     color: Colors.purple,
@@ -150,7 +141,7 @@ class _DashboardState extends State<Dashboard> {
               Padding(
                 padding: const EdgeInsets.all(0.0),
                 child: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.person,
                     size: 30,
                     color: Colors.purple,
@@ -166,12 +157,12 @@ class _DashboardState extends State<Dashboard> {
             ],
           ),
         ),
-        backgroundColor: Color.fromARGB(237, 237, 237, 245),
+        backgroundColor: const Color.fromARGB(237, 237, 237, 245),
         appBar: AppBar(
           backgroundColor: Colors.purple,
           elevation: 0,
           centerTitle: true,
-          title: Text("Fineapp"),
+          title: const Text("Fineapp"),
           actions: [
             //PopupMenuButton(itemBuilder: (context)=>[PopupMenuItem(child: Text("data"))]),
             IconButton(
@@ -187,10 +178,9 @@ class _DashboardState extends State<Dashboard> {
                 SharedPreferences sharedPreferences =
                     await SharedPreferences.getInstance();
                 sharedPreferences.clear();
-                sharedPreferences.commit();
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
-                        builder: (BuildContext context) => Login()),
+                        builder: (BuildContext context) => const Login()),
                     (Route<dynamic> route) => false);
               },
             ),
@@ -204,7 +194,7 @@ class _DashboardState extends State<Dashboard> {
                 builder: (BuildContext context) => const UserTransfer()
             );
           },
-          child: Icon(
+          child: const Icon(
             Icons.monetization_on_sharp,
             size: 40,
           ),
@@ -212,7 +202,7 @@ class _DashboardState extends State<Dashboard> {
         ),
         body: SingleChildScrollView(
           child: ConstrainedBox(
-            constraints: BoxConstraints(),
+            constraints: const BoxConstraints(),
             child: Container(
               child: Column(
                 children: [
@@ -220,7 +210,7 @@ class _DashboardState extends State<Dashboard> {
                     //main widget holding the position and distaince from red is too
                     height: 245,
                     width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         //color: Colors.purple,
                         ),
                     child: Stack(
@@ -230,7 +220,7 @@ class _DashboardState extends State<Dashboard> {
                           left: 0,
                           right: 0,
                           child: Container(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: Colors.purple,
                             ),
                             width: MediaQuery.of(context).size.width,
@@ -243,7 +233,7 @@ class _DashboardState extends State<Dashboard> {
                           left: 10,
                           right: 10,
                           child: Container(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 20),
                             child: Column(
                               //mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -251,12 +241,12 @@ class _DashboardState extends State<Dashboard> {
                                 //first wallet balance content
                                 _isLoading
                                     ? Container(
-                                        child: CircularProgressIndicator())
+                                        child: const CircularProgressIndicator())
                                     : Container(
                                         child: Wallet(
                                           walletBalance:
-                                              mapResponse["walletBalance"]
-                                                  .toString(),
+                                             fmtCurrency( mapResponse["walletBalance"]
+                                                 .toString(), '', 2),
                                           currencey: mapResponse["userCurrency"]
                                               .toString(),
                                         ),
@@ -275,11 +265,17 @@ class _DashboardState extends State<Dashboard> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 30),
 
-                  SizedBox(height: 40),
+                  const Padding(
+                    padding:  EdgeInsets.all(8.0),
+                    child:  Income(income_amt:"32300", expenses:"4030" ,),
+                  ),
+
+                  const SizedBox(height: 30),
                   Container(
                     width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         //Transaction widget
                         //color: Colors.orange,
                         ),
@@ -289,18 +285,18 @@ class _DashboardState extends State<Dashboard> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                                padding: EdgeInsets.symmetric(horizontal: 22),
-                                child: Text(
+                                padding: const EdgeInsets.symmetric(horizontal: 22),
+                                child: const Text(
                                   "Recent Transactions",
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold),
                                 )),
                             Container(
-                                padding: EdgeInsets.symmetric(horizontal: 22),
-                                child: Text(
+                                padding: const EdgeInsets.symmetric(horizontal: 22),
+                                child: const Text(
                                   "View all",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 15,
                                     color: Colors.blue,
                                   ),
@@ -310,12 +306,13 @@ class _DashboardState extends State<Dashboard> {
                       ],
                     ),
                   ),
-                  SizedBox(
+
+                  const SizedBox(
                     height: 10,
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         //color: Colors.pink,
                         ),
                     child: Column(
@@ -323,17 +320,17 @@ class _DashboardState extends State<Dashboard> {
                         Column(
                           children: [
                             //Start of Transaction widget
-                            Transactions(
+                            const Transactions(
                               trans_name: "Amazon",
-                              trans_bal: -1050,
+                              trans_bal: "-1050",
                             ),
-                            Transactions(
+                            const Transactions(
                               trans_name: "Vanila",
-                              trans_bal: -5100,
+                              trans_bal: "-5100",
                             ),
-                            Transactions(
+                            const Transactions(
                               trans_name: "Google Play",
-                              trans_bal: -21888,
+                              trans_bal: "-21888",
                             ),
                             //Closing of  trasaction
                           ],

@@ -1,11 +1,11 @@
+import 'package:bankapp/pages/dashboard.dart';
 import 'package:bankapp/pages/profile.dart';
 import 'package:flutter/material.dart';
 
 import '../util/transactions.dart';
-import 'home.dart';
 
 class Transaction extends StatefulWidget {
-  Transaction({Key? key}) : super(key: key);
+  const Transaction({Key? key}) : super(key: key);
 
   @override
   State<Transaction> createState() => _TransactionState();
@@ -16,7 +16,7 @@ class _TransactionState extends State<Transaction> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color.fromARGB(255, 235, 230, 236),
+        backgroundColor: const Color.fromARGB(255, 235, 230, 236),
         bottomNavigationBar: BottomAppBar(
           child: Row(
             mainAxisSize: MainAxisSize.max,
@@ -25,7 +25,7 @@ class _TransactionState extends State<Transaction> {
               Padding(
                 padding: const EdgeInsets.all(0.0),
                 child: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.home,
                     size: 30,
                     color: Colors.purple,
@@ -33,7 +33,7 @@ class _TransactionState extends State<Transaction> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
+                      MaterialPageRoute(builder: (context) => const Dashboard()),
                     );
                   },
                 ),
@@ -41,7 +41,7 @@ class _TransactionState extends State<Transaction> {
               Padding(
                 padding: const EdgeInsets.all(0.0),
                 child: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.history,
                     size: 30,
                     color: Colors.purple,
@@ -52,7 +52,7 @@ class _TransactionState extends State<Transaction> {
               Padding(
                 padding: const EdgeInsets.all(0.0),
                 child: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.person,
                     size: 30,
                     color: Colors.purple,
@@ -69,125 +69,123 @@ class _TransactionState extends State<Transaction> {
         ),
         appBar: AppBar(
           backgroundColor: Colors.purple,
-          leading: new IconButton(
-              icon: new Icon(Icons.arrow_back_ios, color: Colors.white),
+          leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () => Navigator.of(context).pop()),
           centerTitle: true,
-          title: Text(
+          title: const Text(
             "History",
             style: TextStyle(color: Colors.white),
           ),
         ),
         body: SingleChildScrollView(
             child: ConstrainedBox(
-          constraints: BoxConstraints(),
-          child: Container(
-            child: Column(children: [
-              SizedBox(
-                height: 20,
+          constraints: const BoxConstraints(),
+          child: Column(children: [
+            const SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text("Today"),
+                  Text(
+                    "View all",
+                    style: TextStyle(color: Color.fromARGB(255, 60, 9, 155)),
+                  )
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Today"),
-                    Text(
-                      "View all",
-                      style: TextStyle(color: Color.fromARGB(255, 60, 9, 155)),
-                    )
-                  ],
-                ),
+            ),
+            const Transactions(
+              trans_bal: "-150",
+              trans_name: "Amazon",
+            ),
+            const Transactions(
+              trans_bal: "-150",
+              trans_name: "Amazon",
+            ),
+            const Transactions(
+              trans_bal: "-150",
+              trans_name: "Amazon",
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text("Yesterday"),
+                  Text(
+                    "View all",
+                    style: TextStyle(color: Color.fromARGB(255, 60, 9, 155)),
+                  )
+                ],
               ),
-              Transactions(
-                trans_bal: -150,
-                trans_name: "Amazon",
+            ),
+            const Transactions(
+              trans_bal: "-150",
+              trans_name: "Amazon",
+            ),
+            const Transactions(
+              trans_bal: "-150",
+              trans_name: "Amazon",
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text("Sep 20, 2020"),
+                  Text(
+                    "View all",
+                    style: TextStyle(color: Color.fromARGB(255, 60, 9, 155)),
+                  )
+                ],
               ),
-              Transactions(
-                trans_bal: -150,
-                trans_name: "Amazon",
+            ),
+            const Transactions(
+              trans_bal: "-150",
+              trans_name: "Amazon",
+            ),
+            const Transactions(
+              trans_bal: "-150",
+              trans_name: "Amazon",
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text("Last week"),
+                  Text(
+                    "View all",
+                    style: TextStyle(color: Color.fromARGB(255, 60, 9, 155)),
+                  )
+                ],
               ),
-              Transactions(
-                trans_bal: -150,
-                trans_name: "Amazon",
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Yesterday"),
-                    Text(
-                      "View all",
-                      style: TextStyle(color: Color.fromARGB(255, 60, 9, 155)),
-                    )
-                  ],
-                ),
-              ),
-              Transactions(
-                trans_bal: -150,
-                trans_name: "Amazon",
-              ),
-              Transactions(
-                trans_bal: -150,
-                trans_name: "Amazon",
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Sep 20, 2020"),
-                    Text(
-                      "View all",
-                      style: TextStyle(color: Color.fromARGB(255, 60, 9, 155)),
-                    )
-                  ],
-                ),
-              ),
-              Transactions(
-                trans_bal: -150,
-                trans_name: "Amazon",
-              ),
-              Transactions(
-                trans_bal: -150,
-                trans_name: "Amazon",
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Last week"),
-                    Text(
-                      "View all",
-                      style: TextStyle(color: Color.fromARGB(255, 60, 9, 155)),
-                    )
-                  ],
-                ),
-              ),
-              Transactions(
-                trans_bal: -150,
-                trans_name: "Amazon",
-              ),
-              Transactions(
-                trans_bal: -150,
-                trans_name: "Amazon",
-              ),
-              SizedBox(
-                height: 10,
-              ),
-            ]),
-          ),
+            ),
+            const Transactions(
+              trans_bal: "-150",
+              trans_name: "Amazon",
+            ),
+            const Transactions(
+              trans_bal: "-150",
+              trans_name: "Amazon",
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+          ]),
         )),
       ),
     );

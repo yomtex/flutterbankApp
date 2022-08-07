@@ -29,10 +29,11 @@ class Nav_balance extends StatelessWidget {
               height: 25,
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
                   // fmtCurrency(balance, '\$ ', 2),
-                      '$currency $balance',
+                  '$currency $balance',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 25,

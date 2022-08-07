@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import '../formats/custom_fmt.dart';
 
 class Transactions extends StatelessWidget {
-  final double trans_bal;
+  final String trans_bal;
   final String trans_name;
   const Transactions(
       {Key? key, required this.trans_bal, required this.trans_name})
@@ -42,7 +42,7 @@ class Transactions extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Text(
-                      "${fmtCurrency(trans_bal, '\$', 1)}",
+                      "${fmtCurrency(trans_bal,'', 1)}",
                       style: TextStyle(
                           color: Colors.red, fontWeight: FontWeight.bold),
                     ),
