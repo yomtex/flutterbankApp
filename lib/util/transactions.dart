@@ -4,8 +4,8 @@ import 'package:intl/intl.dart';
 import '../formats/custom_fmt.dart';
 
 class Transactions extends StatelessWidget {
-  final String trans_bal;
-  final String trans_name;
+  final  trans_bal;
+  final  trans_name;
   const Transactions(
       {Key? key, required this.trans_bal, required this.trans_name})
       : super(key: key);

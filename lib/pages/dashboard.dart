@@ -65,36 +65,42 @@ class _DashboardState extends State<Dashboard> {
       }
     }
   }
+  logout()async{
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final prefs = sharedPreferences.getString("token");
+    sharedPreferences.remove("token");
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (BuildContext context) => const Login()),
+            (Route<dynamic> route) => false);
 
-  @override
+  }  @override
   void initState() {
     getData();
     super.initState();
 
     var checkstatus = LoginStatus();
     var _active = checkstatus.status();
-    print(_active);
+    //print(_active);
   }
-
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        logout();
+        break;
+      case AppLifecycleState.detached:
+        logout();
+        break;
+      case AppLifecycleState.inactive:
+        logout();
+        break;
+      case AppLifecycleState.paused:
+        logout();
+        break;
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    return _isLoading
-        ? Scaffold(
-      body: Column(
-        children: [
-          SizedBox(height: MediaQuery.of(context).size.height/2.2,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.purple),
-              ),
-            ],
-          ),
-        ],
-      ),
-    )
-        : Scaffold(
+    return Scaffold(
         drawer: _isLoading
             ? Container(
                 child: const CircularProgressIndicator(),
@@ -200,7 +206,23 @@ class _DashboardState extends State<Dashboard> {
           ),
           backgroundColor: Colors.purple,
         ),
-        body: SingleChildScrollView(
+        body:_isLoading
+            ? Scaffold(
+          body: Column(
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.height/2.2,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.purple),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        )
+            :  SingleChildScrollView(
           child: ConstrainedBox(
             constraints: const BoxConstraints(),
             child: Container(

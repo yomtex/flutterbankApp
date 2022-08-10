@@ -14,11 +14,14 @@ class Login extends StatefulWidget {
 }
 
 class _Login extends State<Login> {
+  bool _isVisible = false;
   bool _isLoading = false;
+  bool appLoad = true;
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
   String message='';
+  String validUser=' ';
   //SharedPreferences sharedPreferences;
   @override
   initState() {
@@ -26,7 +29,7 @@ class _Login extends State<Login> {
   }
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
+      child:  Scaffold(
         backgroundColor: Color.fromARGB(237, 237, 237, 245),
         // appBar: AppBar(
         //   backgroundColor: Colors.purple,
@@ -52,12 +55,17 @@ class _Login extends State<Login> {
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
-                  SizedBox(height: MediaQuery.of(context).size.height/7,),
+                  SizedBox(height: MediaQuery.of(context).size.height/10,),
+                  Container(
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.purple,
+                      child: Icon(Icons.person,size: 80,),),),
                   const Padding(
                     padding: EdgeInsets.all(20.0),
                     child: Text(
                       "Sign In",
-                      style: TextStyle(color: Colors.purple, fontSize: 35, fontFamily: 'times new roman'),
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.purple, fontSize: 35, fontFamily: 'times new roman'),
                     ),
                   ),
                   Form(
@@ -65,25 +73,51 @@ class _Login extends State<Login> {
                     child: Column(
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          padding: EdgeInsets.symmetric(horizontal: 0),
                           child: TextFormField(
                             controller: username,
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                                 labelText: 'Email/Username',
                                 hintText: 'Enter valid username'),
-                            validator: (value){
-                              if(value!.isEmpty){
-                                return "Required";
+                            onChanged: (value){
+                              if(value.isEmpty){
+                                setState((){
+                                  _isVisible = false;
+                                  validUser = "Enter a valid username";
+                                });
+                              }else if(!RegExp(r'^[a-z A-Z]+$').hasMatch(value) && !RegExp(r'^(?=.*[a-zA-Z])(?=.*[0-9])[A-Za-z0-9]+$').hasMatch(value)){
+                                setState((){
+                                  _isVisible = false;
+                                  validUser = "Enter a valid username";
+                                });
+                              }
+                              else if(value.length < 6){
+                                setState((){
+                                  _isVisible = false;
+                                  validUser = "Enter a valid username";
+                                });
+                              }
+                              else{
+                                setState((){
+                                  _isVisible = true;
+                                  validUser = "";
+                                });
                               }
                             },
-
                           ),
                         ),
-                        SizedBox(height: 15,),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(validUser,style: TextStyle(color: Colors.red),),
+                        ),
+
+                        SizedBox(height: 0,),
+
                         Padding(
                           padding: const EdgeInsets.only(
-                              left: 15.0, right: 15.0, top: 15, bottom: 0),
+                              left: 0.0, right: 0.0, top: 10, bottom: 0),
                           child: TextFormField(
                             controller: password,
                             obscureText: true,
@@ -114,39 +148,37 @@ class _Login extends State<Login> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Center(
-                              child: Text(message)),
+                              child: Text(message,style: TextStyle(color: Colors.red),)),
                         ),
-                        Container(
-                          height: 50,
-                          width: 250,
-                          decoration: BoxDecoration(
-                              color: Colors.purple,
-                              borderRadius: BorderRadius.circular(20)),
-                          child: FlatButton(
-                            onPressed: () {
-                              setState(() {
-                                _isLoading= true;
-                              });
-                              if (formkey.currentState!.validate()) {
-                                var uname = username.text;
-                                var upass = password.text;
-                                signIn(uname,upass);
-
-                                //print(uname);
-                                // Navigator.push(context,
-                                //     MaterialPageRoute(builder: (_) => HomePage()));
-                                // print("Validated");
-                                //Navigator.pushReplacementNamed(context, '/dashboard');
-                              } else {
+                        Visibility(
+                          visible: _isVisible,
+                          child: Container(
+                            margin: EdgeInsets.all(0),
+                            height: 50,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                                color: Colors.purple,
+                                borderRadius: BorderRadius.circular(20)),
+                            child: TextButton(
+                              onPressed: () {
                                 setState(() {
-                                  _isLoading=false;
-                                  message = "";
+                                  _isLoading= true;
                                 });
-                              }
-                            },
-                            child: Text(
-                              'Login',
-                              style: TextStyle(color: Colors.white, fontSize: 25),
+                                if (formkey.currentState!.validate()) {
+                                  var uname = username.text;
+                                  var upass = password.text;
+                                  signIn(uname,upass);
+                                } else {
+                                  setState(() {
+                                    _isLoading=false;
+                                    message = "";
+                                  });
+                                }
+                              },
+                              child: Text(
+                                'Login',
+                                style: TextStyle(color: Colors.white, fontSize: 25),
+                              ),
                             ),
                           ),
                         ),
@@ -177,12 +209,12 @@ class _Login extends State<Login> {
     };
 
     var jsonResponse=null;
-    var response = await http.post(serverUrl,body:data);
+    var response = await http.post(serverUrl,body:data).timeout(Duration(seconds: 5));
     if(response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
       //print('data : ${response.body}');
       //print('data : ${response.body}');
-      print(response.body);
+      //print(response.body);
       var decode = jsonDecode(response.body);
       var msg= decode["msg"];
       if(msg == "success"){
