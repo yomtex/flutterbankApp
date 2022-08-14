@@ -80,29 +80,22 @@ class _Login extends State<Login> {
                                 border: OutlineInputBorder(),
                                 labelText: 'Email/Username',
                                 hintText: 'Enter valid username'),
-                            onChanged: (value){
-                              if(value.isEmpty){
-                                setState((){
-                                  _isVisible = false;
-                                  validUser = "Enter a valid username";
-                                });
+                            validator: (value){
+                              validUser="";
+                              if(value!.isEmpty){
+                                  //_isVisible = false;
+                                  return "Enter a valid username";
                               }else if(!RegExp(r'^[a-z A-Z]+$').hasMatch(value) && !RegExp(r'^(?=.*[a-zA-Z])(?=.*[0-9])[A-Za-z0-9]+$').hasMatch(value)){
-                                setState((){
-                                  _isVisible = false;
-                                  validUser = "Enter a valid username";
-                                });
+
+                                  //_isVisible = false;
+                                  return "Enter a valid username";
                               }
                               else if(value.length < 6){
-                                setState((){
-                                  _isVisible = false;
-                                  validUser = "Enter a valid username";
-                                });
+                                  //_isVisible = false;
+                                  return "Enter a valid username";
                               }
                               else{
-                                setState((){
-                                  _isVisible = true;
-                                  validUser = "";
-                                });
+                                return null;
                               }
                             },
                           ),
@@ -130,7 +123,7 @@ class _Login extends State<Login> {
                                 return "Required";
                               }else if(value.length < 6){
                                 return "Password too short";
-                              }
+                              }else{return null;}
                             },
                             //validatePassword,        //Function to check validation
                           ),
@@ -151,7 +144,7 @@ class _Login extends State<Login> {
                               child: Text(message,style: TextStyle(color: Colors.red),)),
                         ),
                         Visibility(
-                          visible: _isVisible,
+                          visible: true,
                           child: Container(
                             margin: EdgeInsets.all(0),
                             height: 50,
@@ -209,8 +202,8 @@ class _Login extends State<Login> {
     };
 
     var jsonResponse=null;
-    var response = await http.post(serverUrl,body:data).timeout(Duration(seconds: 5));
-    if(response.statusCode == 200) {
+    var response = await http.post(serverUrl,body:data);
+    if((response.statusCode >= 200 && response.statusCode<= 299)) {
       jsonResponse = json.decode(response.body);
       //print('data : ${response.body}');
       //print('data : ${response.body}');
@@ -234,6 +227,9 @@ class _Login extends State<Login> {
         });
       }
 
+    }else{
+      message = "Something went wrong, try later";
+      _isLoading = false;
     }
   }
 

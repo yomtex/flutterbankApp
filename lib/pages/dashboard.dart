@@ -58,7 +58,7 @@ class _DashboardState extends State<Dashboard> {
         } else {
           _isLoading = false;
           //print(data);
-          setState(() {
+          setState((){
             mapResponse = data;
           });
         }
@@ -67,7 +67,6 @@ class _DashboardState extends State<Dashboard> {
   }
   logout()async{
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    final prefs = sharedPreferences.getString("token");
     sharedPreferences.remove("token");
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (BuildContext context) => const Login()),
@@ -181,6 +180,7 @@ class _DashboardState extends State<Dashboard> {
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () async {
+                _isLoading = true;
                 SharedPreferences sharedPreferences =
                     await SharedPreferences.getInstance();
                 sharedPreferences.clear();

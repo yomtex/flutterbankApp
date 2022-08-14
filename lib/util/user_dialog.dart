@@ -24,12 +24,14 @@ class _UserTransferState extends State<UserTransfer> {
   bool _is_local=false;
   bool sendBtn = false;
   bool initialVal = false;
+  String userCurrency = '';
   String success=' ';
   String username_receiver='';
+  String local_details = '';
   GlobalKey<FormState> _local_formkey = GlobalKey<FormState>();
   TextEditingController amount = TextEditingController();
   TextEditingController uname = TextEditingController();
-  TextEditingController details = TextEditingController();
+  TextEditingController _local_details = TextEditingController();
   TextEditingController local_amount = TextEditingController();
   TextEditingController local_description = TextEditingController();
   String message=' ';
@@ -39,17 +41,15 @@ class _UserTransferState extends State<UserTransfer> {
 
   @override
   initState()  {
-    var checkstatus =new LoginStatus();
-    var _active = checkstatus.status();
-    print(_active);
+    var checkstatus =LoginStatus();
+    checkstatus.status();
 
   }
   final timer =
-  Timer(const Duration(seconds: 0), () => print('Timer finished'));
+  Timer(const Duration(seconds: 0), () => null);
 // Cancel timer, callback never called.
 
   Widget build(BuildContext context) {
-    final _local_amount = TextEditingController();
     return Dialog(
       backgroundColor: Colors.grey[200],
       shape: const RoundedRectangleBorder(
@@ -59,10 +59,10 @@ class _UserTransferState extends State<UserTransfer> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(20, 20, 10, 5),
+              padding: const EdgeInsets.fromLTRB(20, 20, 10, 5),
               child: TextFormField(
                 autofocus: true,
-                decoration: InputDecoration(hintText: "Enter username"),
+                decoration: const InputDecoration(hintText: "Enter username"),
                 onChanged: (value) => {
                   setState((){
                     sendBtn =false;
@@ -78,11 +78,14 @@ class _UserTransferState extends State<UserTransfer> {
                     }else if(value.length < 3){
                     message ="Too short";
                     _isLoading = false;
+                    }else if(!RegExp(r'^[a-zA-Z0-9]*$').hasMatch(value)){
+                      message ="Enter a valid username";
+                      _isLoading = false;
                     }
                     else{
                       _isLoading = true;
                       message ="";
-                      Future.delayed(Duration(seconds: 2),(){
+                      Future.delayed(const Duration(seconds: 2),(){
 
                       receiver(value);
                       });
@@ -93,9 +96,9 @@ class _UserTransferState extends State<UserTransfer> {
               ),
             ),
 
-            _isLoading?Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: const Center(
+            _isLoading?const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20.0),
+              child: Center(
                 child: CircularProgressIndicator(semanticsLabel: 'loading', valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),),
               ),
             ):
@@ -103,7 +106,7 @@ class _UserTransferState extends State<UserTransfer> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: Text(
                 message.toString(),style:
-              TextStyle(color: Colors.red),
+              const TextStyle(color: Colors.red),
               ),
             ),
             //_isLoading?Container(child: CircularProgressIndicator(),):Text(message2.toString()),
@@ -115,12 +118,12 @@ class _UserTransferState extends State<UserTransfer> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: TextFormField(
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                           readOnly: true,
                           initialValue: success.toString(),
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: '',
                               hintText: ''),
@@ -132,9 +135,9 @@ class _UserTransferState extends State<UserTransfer> {
 
                         ),
                       ),
-                      SizedBox(height: 15,),
+                      const SizedBox(height: 15,),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: TextFormField(
                           inputFormatters: <TextInputFormatter>[
                             TextInputFormatter.withFunction(
@@ -143,9 +146,9 @@ class _UserTransferState extends State<UserTransfer> {
                               ),
                             ),
                           ],
-                          keyboardType: TextInputType.numberWithOptions(decimal:true),
+                          keyboardType: const TextInputType.numberWithOptions(decimal:true),
                           onChanged:(value)=>sendBtn=false,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: 'Amount',
                               hintText: 'Amount'),
@@ -157,18 +160,17 @@ class _UserTransferState extends State<UserTransfer> {
 
                         ),
                       ),
-                      SizedBox(height: 15,),
+                      const SizedBox(height: 15,),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: TextFormField(
-                          controller: details,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
+                          decoration: const InputDecoration(
+                              border: const OutlineInputBorder(),
                               labelText: 'Description',
                               hintText: 'Description'),
                         ),
                       ),
-                      SizedBox(height: 15,),
+                      const SizedBox(height: 15,),
                     ],
                   ),
               ),
@@ -182,13 +184,22 @@ class _UserTransferState extends State<UserTransfer> {
                 key:_local_formkey,
                 child: Column(
                   children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Text(success.toString()),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Text(success.toString(),style: const TextStyle(fontWeight: FontWeight.bold),),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Text(userCurrency.toString(),style: const TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 15,),
+                    const SizedBox(height: 15,),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: TextFormField(
                         onChanged: (value) => {
                           Timer(const Duration(seconds: 1),()
@@ -225,9 +236,9 @@ class _UserTransferState extends State<UserTransfer> {
                             ),
                           ),
                         ],
-                        keyboardType: TextInputType.numberWithOptions(decimal:true),
+                        keyboardType: const TextInputType.numberWithOptions(decimal:true),
 
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Amount',
                             hintText: 'Amount'),
@@ -239,20 +250,20 @@ class _UserTransferState extends State<UserTransfer> {
 
                       ),
                     ),
-                    SizedBox(height: 15,),
+                    const SizedBox(height: 15,),
                     Text(charges.toString()),
-                    SizedBox(height: 15,),
+                    const SizedBox(height: 15,),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: TextFormField(
-                        controller: details,
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(),
+                        controller: _local_details,
+                        decoration: const InputDecoration(
+                            border: const OutlineInputBorder(),
                             labelText: 'Description',
                             hintText: 'Description'),
                       ),
                     ),
-                    SizedBox(height: 15,),
+                    const SizedBox(height: 15,),
 
                     Visibility(
                       visible: sendBtn,
@@ -265,15 +276,20 @@ class _UserTransferState extends State<UserTransfer> {
                         child: TextButton(
 
                           onPressed: () {
-                            setState(() {
-                              send_fund_local();
-                              _isLoading= true;
-                              sendBtn =false;
-                              _is_local = false;
-                              _isVisible = false;
-                            });
+                            if(_local_formkey.currentState!.validate()){
+                               //local_details = _local_details.text;
+                              setState(() {
+                                local_details = _local_details.text;
+                                send_fund_local();
+                                _isLoading= true;
+                                sendBtn =false;
+                                _is_local = false;
+                                _isVisible = false;
+                                print(local_details);
+                              });
+                            }
                           },
-                          child: Text(
+                          child: const Text(
                             'Send',
                             style: TextStyle(color: Colors.white, fontSize: 25),
                           ),
@@ -323,6 +339,7 @@ class _UserTransferState extends State<UserTransfer> {
             }else{
               username_receiver= responseDecode["username"];
               success= responseDecode["fullname"];
+              userCurrency = responseDecode["userCurrency"];
               _local_receiver(username_receiver);
               message="";
             }
@@ -368,7 +385,7 @@ class _UserTransferState extends State<UserTransfer> {
 
       sharedPreferences.remove("token");
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => Login()),
+          MaterialPageRoute(builder: (BuildContext context) => const Login()),
               (Route<dynamic> route) => false);
     }
     else{
@@ -399,7 +416,7 @@ class _UserTransferState extends State<UserTransfer> {
     print(responseDecode);
     if(response.statusCode >= 200 && response.statusCode<= 299){
       setState((){
-        Future.delayed(Duration(seconds: 0),(){
+        Future.delayed(const Duration(seconds: 0),(){
           if(responseDecode == "Insufficient funds!"){
             _isLoading=false;
             charges =responseDecode;
@@ -433,7 +450,7 @@ class _UserTransferState extends State<UserTransfer> {
     }else{
       sharedPreferences.remove("token");
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => Login()),
+          MaterialPageRoute(builder: (BuildContext context) => const Login()),
               (Route<dynamic> route) => false);
     }
 
@@ -461,31 +478,32 @@ class _UserTransferState extends State<UserTransfer> {
       'send_to':username_receiver,
       'charged_amount':lamount_charged,
       'amount':lsend_amount,
-      'transfer_type':'local'
+      'transfer_type':'local',
+      'description':local_details
     };
     var response = await http.post(serverUrl,body:data, headers: {
       'Accept': 'application/json',
       'Authorization': 'Bearer $prefs'
     });
     var responseDecode = jsonDecode(response.body);
-    print(responseDecode);
+    // print(responseDecode);
     if(response.statusCode >= 200 && response.statusCode<= 299)
     {
       if(responseDecode["msg"] == "success"){
-        print(responseDecode["msg"]);
+        // print(responseDecode["msg"]);
 
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) =>const Success()),
         );
       }else if(responseDecode["msg"]=="failed"){
-        print("Transfer failed");
+        // print("Transfer failed");
       }
     }else
     {
       sharedPreferences.remove("token");
-      _isLoading?CircularProgressIndicator():Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => Login()),
+      _isLoading?const CircularProgressIndicator():Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (BuildContext context) => const Login()),
               (Route<dynamic> route) => false);
     }
   }

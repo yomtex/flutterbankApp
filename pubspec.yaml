@@ -42,6 +42,7 @@ dependencies:
   custom_switch: ^0.0.1
   connectivity_plus: ^2.3.6
   internet_connection_checker: ^0.0.1+4
+  dotted_border: ^2.0.0+2
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,6 @@
 import 'package:bankapp/pages/dashboard.dart';
 import 'package:bankapp/pages/profile.dart';
+import 'package:bankapp/util/transaction_details.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -24,6 +25,8 @@ class _TransactionState extends State<Transaction> {
   String fname= "";
   String lname= "";
   String initials = "";
+  String initial = "";
+  String debit="Debit"; String  credit="Credit";
 
   logout()async{
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -48,7 +51,7 @@ class _TransactionState extends State<Transaction> {
       http.Response userRespo = await http.get(sender, headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer $prefs'
-      }).timeout(Duration(seconds: 10));
+      });
       if (!(userRespo.statusCode >= 200 && userRespo.statusCode <= 299)) {
         //means user logged out or session expires
         //return user to login page
@@ -77,7 +80,7 @@ class _TransactionState extends State<Transaction> {
         http.Response response = await http.get(url, headers: {
           'Accept': 'application/json',
           'Authorization': 'Bearer $prefs'
-        }).timeout(Duration(seconds: 10));
+        });
         if (!(response.statusCode >= 200 && response.statusCode <= 299)) {
           //means user logged out or session expires
           //return user to login page
@@ -246,14 +249,18 @@ class _TransactionState extends State<Transaction> {
                       children: [
                         InkWell(
                           onTap: (){
-                            Map data={
-                              "id":transactions[index]["id"],
-                              "sender":transactions[index]["from"],
-                              "receiver":transactions[index]["send_to"],
-                              "amount":transactions[index]["recieving_amount"],
-                              "charges":transactions[index]["charges"],
-                            };
-                            print(data);
+                            _isLoading?Container(child: CircularProgressIndicator(),):Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) =>
+                                  TransactionDetails(
+                                      id: transactions[index]["id"],
+                                      sender: transactions[index]["from"],
+                                      receiver: transactions[index]["send_to"],
+                                      charges:transactions[index]["charges"],
+                                      amount: transactions[index]["recieving_amount"],
+                                      currency: sender_currency,
+                                  )),
+                            );
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -272,9 +279,9 @@ class _TransactionState extends State<Transaction> {
                                     padding: const EdgeInsets.all(0.0),
                                     child: Container(
                                       child: transactions[index]["from"]==currentusername?
-                                      const Text("Debit",
+                                       Text(debit,
                                         style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),):
-                                      const Text("Credit",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
+                                       Text(credit,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
                                     ),
                                   ),
                                 ],
@@ -311,17 +318,6 @@ class _TransactionState extends State<Transaction> {
                     ),
                   ),
                 );
-                  // return Container(
-                  //   decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(10)),
-                  //   child:Row(
-                  //     children: [
-                  //       Column(children: [Text(transactions[index]["sending_amount"]),Text(transactions[index]["sending_amount"])],),
-                  //       Padding(
-                  //       padding: const EdgeInsets.all(8.0),
-                  //       child: Text(transactions[index]["sending_amount"]),
-                  // ),
-                  //     ],
-                  //   ),);
                 }),
 
             const SizedBox(
@@ -338,3 +334,5 @@ class _TransactionState extends State<Transaction> {
     );
   }
 }
+
+
