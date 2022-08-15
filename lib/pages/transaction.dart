@@ -96,6 +96,7 @@ class _TransactionState extends State<Transaction> {
             setState((){
               mapResponse = json.decode(response.body);
               transactions = mapResponse["data"];
+              print(mapResponse);
               for(var x = 1; x<transactions.length; x++){
                 if(transactions[x]["from"] == currentusername){
                   setState((){
@@ -295,7 +296,7 @@ class _TransactionState extends State<Transaction> {
                                         color: Colors.red, fontWeight: FontWeight.bold),),
                                      Text(sender_currency,  style: TextStyle(
                                         color: Colors.red, fontWeight: FontWeight.bold),),
-                                    Text(transactions[index]["recieving_amount"],
+                                    Text(transactions[index]["sending_amount"],
                                       style: const TextStyle(
                                           color: Colors.red, fontWeight: FontWeight.bold),
                                     ),
@@ -306,7 +307,7 @@ class _TransactionState extends State<Transaction> {
                                         color: Colors.green, fontWeight: FontWeight.bold),),
                                     Text(sender_currency,  style: TextStyle(
                                         color: Colors.green, fontWeight: FontWeight.bold),),
-                                    Text(transactions[index]["recieving_amount"], style: const TextStyle(
+                                    Text(transactions[index]["sending_amount"], style: const TextStyle(
                                         color: Colors.green, fontWeight: FontWeight.bold)),
                                   ],
                                 ),

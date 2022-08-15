@@ -22,7 +22,7 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   Map mapResponse = {};
   bool isNull = false;
   bool _isLoading = true;
@@ -75,12 +75,20 @@ class _DashboardState extends State<Dashboard> {
   }  @override
   void initState() {
     getData();
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
 
     var checkstatus = LoginStatus();
     var _active = checkstatus.status();
     //print(_active);
   }
+
+  @override
+  void dispose(){
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:

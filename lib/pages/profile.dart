@@ -2,7 +2,6 @@ import 'package:bankapp/pages/dashboard.dart';
 import 'package:bankapp/pages/transaction.dart';
 import 'package:bankapp/util/user_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:custom_switch/custom_switch.dart';
 
 
 class Profile extends StatefulWidget {
@@ -382,16 +381,16 @@ class _ProfileState extends State<Profile> {
                                       fontSize: 18,
                                     ),
                                   ),
-                                  CustomSwitch(
-                                    value:isSwitched,
-                                    activeColor: Colors.purple,
-                                    onChanged: (value){
-                                      print(value);
-                                      setState((){
-                                        isSwitched = value;
-                                      });
-                                    },//
-                                  ),
+                                  // CustomSwitch(
+                                  //   value:isSwitched,
+                                  //   activeColor: Colors.purple,
+                                  //   onChanged: (value){
+                                  //     print(value);
+                                  //     setState((){
+                                  //       isSwitched = value;
+                                  //     });
+                                  //   },//
+                                  // ),
                                 ],
                               ),
                             ),
