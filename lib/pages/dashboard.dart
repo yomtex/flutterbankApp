@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bankapp/formats/custom_fmt.dart';
 import 'package:bankapp/pages/profile.dart';
 import 'package:bankapp/pages/transaction.dart';
@@ -101,17 +103,20 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        logout();
+        Timer(Duration(seconds: 60), () {
+          logout(); });
         break;
       case AppLifecycleState.detached:
-        Container(decoration: BoxDecoration(color: Colors.purple),);
-        logout();
+        Timer(Duration(seconds: 60), () {
+          logout(); });
         break;
       case AppLifecycleState.inactive:
-        logout();
+        Timer(Duration(seconds: 60), () {
+          logout(); });
         break;
       case AppLifecycleState.paused:
-        logout();
+        Timer(Duration(seconds: 60), () {
+          logout(); });
         break;
     }
   }

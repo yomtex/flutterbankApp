@@ -44,6 +44,7 @@ class _UserTransferState extends State<UserTransfer> {
   String message=' ';
   String message2=' ';
   String charges=' ';
+  String? international_amt, international_username,international_details;
   String? lreceiver_uname,lamount_charged,lsend_amount;
 
   @override
@@ -216,12 +217,12 @@ class _UserTransferState extends State<UserTransfer> {
                                 //local_details = _local_details.text;
                                 setState(() {
                                   int_details = _int_details.text;
-                                  send_fund_local();
+                                  send_fund_international();
                                   _isLoading= true;
                                   sendBtn =false;
                                   _is_local = false;
                                   _isVisible = false;
-                                  print(local_details);
+                                  print(int_details);
                                 });
                               }
                             },
@@ -442,6 +443,7 @@ class _UserTransferState extends State<UserTransfer> {
               if(message2 == "1"){
                 userType = "1";
                 userCurrency ="";
+                international_username=responseDecode["username"];
                 message="";
                 success= responseDecode["username"];
                 userCurrency = responseDecode["userCurrency"];
@@ -450,6 +452,7 @@ class _UserTransferState extends State<UserTransfer> {
               }else{
                 userType = "0";
                 success= responseDecode["fullname"];
+                international_username=responseDecode["username"];
                 userCurrency = responseDecode["userCurrency"];
                 pCurrency = responseDecode["userCurrency"];
                 message="";
@@ -521,12 +524,15 @@ class _UserTransferState extends State<UserTransfer> {
               //private user
               _isLoading = false;
               sendBtn = true;
+              international_amt=value;
               print(userType);
               charges = responseDecode["msg"];
+
               receiving_amt = "";
             }else{
               //public user
               _isLoading = false;
+              international_amt=value;
               sendBtn = true;
               print(responseDecode);
               charges = responseDecode["msg"];
@@ -625,7 +631,37 @@ class _UserTransferState extends State<UserTransfer> {
   }
   //international ttransfer method
   send_fund_international()async{
+    print("$international_amt $international_username $int_details");
+    var serverUrl = Uri.parse("https://laravel.teletradeoptions.com/api/auth/international-transfer");
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final prefs = sharedPreferences.getString("token");
+    Map data = {
+      'send_to':international_username,
+      'amount':international_amt,
+      'description':int_details
+    };
+    var response = await http.post(serverUrl,body:data, headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $prefs'
+    });
+    var responseDecode = jsonDecode(response.body);
+    // print(responseDecode);
+    if(response.statusCode >= 200 && response.statusCode<= 299)
+    {
+      if(responseDecode["msg"] == "success"){
+        // print(responseDecode["msg"]);
 
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) =>const Success()),
+        );
+      }else if(responseDecode["msg"]=="failed"){
+        // print("Transfer failed");
+      }
+    }else
+    {
+      charges = responseDecode["msg"];
+    }
   }
 
   //Local Transfer method

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bankapp/pages/dashboard.dart';
 import 'package:bankapp/pages/profile.dart';
 import 'package:bankapp/util/transaction_details.dart';
@@ -133,16 +135,20 @@ class _TransactionState extends State<Transaction> {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        logout();
+        Timer(Duration(seconds: 60), () {
+          logout(); });
         break;
       case AppLifecycleState.detached:
-        logout();
+        Timer(Duration(seconds: 60), () {
+          logout(); });
         break;
       case AppLifecycleState.inactive:
-        logout();
+        Timer(Duration(seconds: 60), () {
+          logout(); });
         break;
       case AppLifecycleState.paused:
-        logout();
+        Timer(Duration(seconds: 60), () {
+          logout(); });
         break;
     }
   }
@@ -181,7 +187,9 @@ class _TransactionState extends State<Transaction> {
                     size: 30,
                     color: Colors.purple,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+
+                  },
                 ),
               ),
               Padding(
@@ -204,9 +212,9 @@ class _TransactionState extends State<Transaction> {
         ),
         appBar: AppBar(
           backgroundColor: Colors.purple,
-          leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-              onPressed: () => Navigator.of(context).pop()),
+          // leading: IconButton(
+          //     icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          //     onPressed: () => Navigator.of(context).pop()),
           centerTitle: true,
           title: const Text(
             "History",
