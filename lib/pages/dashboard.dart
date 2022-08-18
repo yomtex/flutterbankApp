@@ -26,43 +26,52 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   Map mapResponse = {};
   bool isNull = false;
   bool _isLoading = true;
+
+
+  //Getting current user details
   Future getData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final prefs = sharedPreferences.getString("token");
     //final value = prefs.get(key ) ?? 0;
-    if (prefs == null) {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => const Login()),
-          (Route<dynamic> route) => false);
-    } else {
-      var url = Uri.parse("https://laravel.teletradeoptions.com/api/auth/user-profile");
-      http.Response response = await http.get(url, headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $prefs'
-      });
-
-      //var responsedata = json.decode(response.body);
-      //var errMsg = (responsedata["message"]);
-      if (!(response.statusCode >= 200 && response.statusCode <= 299)) {
-        //means user logged out or session expires
-        //return user to login page
-        sharedPreferences.remove("token");
+    try {
+      if (prefs == null) {
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (BuildContext context) => const Login()),
-            (Route<dynamic> route) => false);
+                (Route<dynamic> route) => false);
       } else {
-        var data = json.decode(response.body)["data"];
+        var url = Uri.parse(
+            "https://laravel.teletradeoptions.com/api/auth/user-profile");
+        http.Response response = await http.get(url, headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $prefs'
+        });
 
-        if (mapResponse == null) {
-          //print("nullb nu");
+        //var responsedata = json.decode(response.body);
+        //var errMsg = (responsedata["message"]);
+        if (!(response.statusCode >= 200 && response.statusCode <= 299)) {
+          //means user logged out or session expires
+          //return user to login page
+          sharedPreferences.remove("token");
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (BuildContext context) => const Login()),
+                  (Route<dynamic> route) => false);
         } else {
-          _isLoading = false;
-          //print(data);
-          setState((){
-            mapResponse = data;
-          });
+          var data = json.decode(response.body)["data"];
+
+          if (mapResponse == null) {
+            //print("nullb nu");
+          } else {
+            _isLoading = false;
+            //print(data);
+            setState(() {
+              mapResponse = data;
+            });
+          }
         }
       }
+    }catch(e){
+      print("No connection");
     }
   }
   logout()async{
@@ -95,6 +104,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
         logout();
         break;
       case AppLifecycleState.detached:
+        Container(decoration: BoxDecoration(color: Colors.purple),);
         logout();
         break;
       case AppLifecycleState.inactive:

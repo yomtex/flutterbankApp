@@ -26,6 +26,7 @@ class _TransactionState extends State<Transaction> {
   String lname= "";
   String initials = "";
   String initial = "";
+  late double trans;
   String debit="Debit"; String  credit="Credit";
 
   logout()async{
@@ -67,7 +68,7 @@ class _TransactionState extends State<Transaction> {
         lname = userData["lastname"].toString();
         var _sender_currency = userData["userCurrency"];
         initials = fname[0].toUpperCase()+lname[0].toUpperCase();
-        print(initials);
+        //print(initials);
         if(_sender_currency == "NGN"){
           sender_currency="₦";
         }else if(_sender_currency == "USD"){
@@ -96,7 +97,7 @@ class _TransactionState extends State<Transaction> {
             setState((){
               mapResponse = json.decode(response.body);
               transactions = mapResponse["data"];
-              print(mapResponse);
+              //print(mapResponse);
               for(var x = 1; x<transactions.length; x++){
                 if(transactions[x]["from"] == currentusername){
                   setState((){
@@ -250,6 +251,9 @@ class _TransactionState extends State<Transaction> {
                       children: [
                         InkWell(
                           onTap: (){
+                            setState((){
+                               trans  = transactions[index]["from"]==currentusername?double.parse(transactions[index]["sending_amount"]):double.parse(transactions[index]["recieving_amount"]);
+                            });
                             _isLoading?Container(child: CircularProgressIndicator(),):Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) =>
@@ -258,7 +262,8 @@ class _TransactionState extends State<Transaction> {
                                       sender: transactions[index]["from"],
                                       receiver: transactions[index]["send_to"],
                                       charges:transactions[index]["charges"],
-                                      amount: transactions[index]["recieving_amount"],
+                                      amount:trans ,
+                                      details:transactions[index]["description"] ,
                                       currency: sender_currency,
                                   )),
                             );
@@ -307,7 +312,7 @@ class _TransactionState extends State<Transaction> {
                                         color: Colors.green, fontWeight: FontWeight.bold),),
                                     Text(sender_currency,  style: TextStyle(
                                         color: Colors.green, fontWeight: FontWeight.bold),),
-                                    Text(transactions[index]["sending_amount"], style: const TextStyle(
+                                    Text(transactions[index]["recieving_amount"], style: const TextStyle(
                                         color: Colors.green, fontWeight: FontWeight.bold)),
                                   ],
                                 ),

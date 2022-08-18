@@ -14,11 +14,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      //home: Positioned_test(),
-      //home: Network(),
-      home: Login(),
+    return Builder(
+      builder: (context) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          //home: Positioned_test(),
+          //home: Network(),
+          home: Login(),
+        );
+      }
     );
   }
 }

@@ -192,6 +192,7 @@ class _Login extends State<Login> {
   }
 
   signIn(String username,upass)async{
+  try{
 
     var serverUrl = Uri.parse("https://laravel.teletradeoptions.com/api/auth/login");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -231,6 +232,12 @@ class _Login extends State<Login> {
       message = "Something went wrong, try later";
       _isLoading = false;
     }
+  }catch(e){
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No Connection.')));
+    print("error");
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=>Login()), (Route<dynamic> route) => false);
+  }
   }
 
   getUser()async{
