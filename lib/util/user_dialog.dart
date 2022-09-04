@@ -23,6 +23,9 @@ class _UserTransferState extends State<UserTransfer> {
   bool _isLoading = false;
   bool _isVisible = false;
   bool _is_local=false;
+  bool backBtn=false;
+  bool searchForm=true;
+  bool searchBtn=true;
   bool sendBtn = false;
   bool initialVal = false;
   String userCurrency = '';
@@ -33,6 +36,10 @@ class _UserTransferState extends State<UserTransfer> {
   String local_details = '';
   String int_details = '';
   String userType = '';
+  String search_username = '';
+  GlobalKey<FormState> searchUser = GlobalKey<FormState>();
+  TextEditingController searchUname = TextEditingController();
+
   GlobalKey<FormState> _local_formkey = GlobalKey<FormState>();
   GlobalKey<FormState> _int_formkey = GlobalKey<FormState>();
   TextEditingController amount = TextEditingController();
@@ -67,45 +74,134 @@ class _UserTransferState extends State<UserTransfer> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 10, 5),
-              child: TextFormField(
-                autofocus: true,
-                decoration: const InputDecoration(hintText: "Enter username"),
-                onChanged: (value) => {
-                timer.cancel(),
-                Timer(Duration(seconds: 5),()=>""),
-                  setState((){
-                    sendBtn =false;
-                    _isVisible = false;
-                    _is_local = false;
-                    local_amount.clear();
-                    message="";
-                    charges = "";
-                    _isLoading=true;
-                    if(value.isEmpty){
-                    print("empty");
-                    _isLoading = false;
-                    }else if(value.length < 3){
-                    message ="Too short";
-                    _isLoading = false;
-                    }else if(!RegExp(r'^[a-zA-Z0-9]*$').hasMatch(value)){
-                      message ="Enter a valid username";
-                      _isLoading = false;
-                    }
-                    else{
-                      _isLoading = true;
-                      message ="";
-                      // Future.delayed(const Duration(seconds: 2),(){
-                      //
-                      // receiver(value);
-                      // });
-                      timer.cancel();
-                     receiver(value);
-                    }
-                  }),
-                  },
+            const SizedBox(height: 10,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Visibility(
+                  visible: backBtn,
+                  child: InkWell(
+                    onTap: (){
+                      setState((){
+                        searchForm=true;
+                        searchBtn=true;
+                        _isVisible=false;
+                        _is_local=false;
+                        receiving_amt="";
+                        message="";
+                        charges="";
+                      });
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 0.0,horizontal: 13),
+                          child:Icon(Icons.arrow_back_outlined),
+                          // Text(
+                          //   "Back",
+                          //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15,
+                          //       decoration: TextDecoration.underline)
+                          //   ,)
 
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: ()=>  Navigator.pop(context),
+                  child: const Padding(
+                    padding:   EdgeInsets.symmetric(vertical: 0.0,horizontal: 13),
+                    child: Icon(Icons.close),
+                    // Text(
+                    //   "Back",
+                    //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15,
+                    //       decoration: TextDecoration.underline)
+                    //   ,)
+
+                  ),
+                ),
+              ],
+            ),
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 10, 5),
+              child: Visibility(
+                visible: searchForm,
+                child: Form(
+                  key: searchUser,
+                  child: TextFormField(
+                    controller: searchUname,
+                    autofocus: true,
+                    decoration: const InputDecoration(hintText: "Enter username"),
+                    onFieldSubmitted: (value) => {
+                    timer.cancel(),
+                    Timer(const Duration(seconds: 5),()=>""),
+                      setState((){
+                        searchBtn=false;
+                        searchForm=false;
+                        backBtn=false;
+                        message="";
+                        _isVisible = false;
+                        _is_local = false;
+                        local_amount.clear();
+                        message="";
+                        charges = "";
+                        _isLoading=true;
+                        if(value.isEmpty){
+                        print("empty");
+                        _isLoading = false;
+                        }else if(value.length < 3){
+                        message ="Too short";
+                        _isLoading = false;
+                        }else if(!RegExp(r'^[a-zA-Z0-9]*$').hasMatch(value)){
+                          message ="Enter a valid username";
+                          _isLoading = false;
+                        }
+                        else{
+                          _isLoading = true;
+                          backBtn=false;
+                          message ="";
+                          // Future.delayed(const Duration(seconds: 2),(){
+                          //
+                          // receiver(value);
+                          // });
+                          timer.cancel();
+                         receiver(value);
+                        }
+                      }),
+                      },
+
+                  ),
+                ),
+              ),
+            ),
+            Visibility(
+              visible: searchBtn,
+              child: Center(
+                child: InkWell(onTap: (){
+                  if(searchUname.toString().isEmpty){
+                    setState((){
+                      message="Field cannot be empty";});
+                  }else{
+
+                    setState((){
+                      searchBtn=false;
+                      searchForm=false;
+                      _isLoading = true;
+                      backBtn=false;
+                      message="";
+                      if(searchUser.currentState!.validate()){
+                        search_username = searchUname.text;
+                        receiver(search_username);
+                      }
+                    });
+                  }
+                },
+                    child: Container(
+                      decoration: BoxDecoration(color: Colors.purple,borderRadius: BorderRadius.circular(15)),
+                      width: MediaQuery.of(context).size.width/2,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: const Text("Search",style: TextStyle(color: Colors.white), textAlign: TextAlign.center,),
+                      ),),
+                  ),
               ),
             ),
 
@@ -157,6 +253,7 @@ class _UserTransferState extends State<UserTransfer> {
                           ],
                           keyboardType: const TextInputType.numberWithOptions(decimal:true),
                           onChanged: (value) => {
+                          sendBtn=false,
                               setState((){
                                 _isLoading= true;
                                 charges ="";
@@ -373,12 +470,16 @@ class _UserTransferState extends State<UserTransfer> {
   }
 
   receiver(String value)async {
-  try{
+    backBtn=false;
     if(value.length < 3){
       message = "Field cannot be empty";
+    }else if(value.isEmpty){
+      message = "Field cannot be empty";
     }
+
     else
     {
+      try{
       receiving_amt="";
       var serverUrl = Uri.parse("https://laravel.teletradeoptions.com/api/auth/search-user");
       SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -398,6 +499,7 @@ class _UserTransferState extends State<UserTransfer> {
           setState((){
             _isLoading =false;
             if(responseDecode["msg"] == "success"){
+              backBtn = true;
               //print(responseDecode);
               message2= responseDecode["isPrivate"];
               if(message2 == "1"){
@@ -427,6 +529,8 @@ class _UserTransferState extends State<UserTransfer> {
 
               print(transfer_type);
             }else{
+              searchForm=true;
+              searchBtn=true;
               message=responseDecode["msg"];
               _isVisible=false;
               _is_local=false;
@@ -436,6 +540,7 @@ class _UserTransferState extends State<UserTransfer> {
           //international transfer
           //message = value;
           setState((){
+            backBtn = true;
             _isLoading =false;
             if(responseDecode["msg"] == "success"){
               //print(responseDecode);
@@ -462,6 +567,8 @@ class _UserTransferState extends State<UserTransfer> {
               _isVisible=true;
               _is_local=false;
             }else{
+              searchForm=true;
+              searchBtn=true;
               message=responseDecode["msg"];
               _isVisible=false;
               _is_local=false;
@@ -477,15 +584,18 @@ class _UserTransferState extends State<UserTransfer> {
       }
       else{
         setState((){
+          searchForm=true;
+          searchBtn=true;
+          backBtn=false;
           _isLoading =false;
           message= "user not found";
           _isVisible=false;
           message2= " ";
         });
       }
-    }
-  }catch(e){
-    print("No connection");
+    }catch(e){
+        print("No connection");
+      }
   }
 }
   international_rate(String value)async{
@@ -504,29 +614,20 @@ class _UserTransferState extends State<UserTransfer> {
         'Authorization': 'Bearer $prefs'
       });
       var responseDecode = jsonDecode(response.body);
+      print(responseDecode);
       if(response.statusCode >= 200 && response.statusCode<= 299){
         var limit = jsonDecode(response.body)["msg"].toString();
-        if(limit.contains("minimum")){
-          setState((){
-            _isLoading = false;
-            sendBtn = false;
-            charges = responseDecode["msg"];
-          });
-        }else if(limit.contains("maximum")){
-          setState(() {
-            _isLoading = false;
-            sendBtn = false;
-            charges = responseDecode["msg"];
-          });
-        }else{
+        if( jsonDecode(response.body)["msg"] =="success"){
+
           setState((){
             if(userType == "1"){
+              print(response.body);
               //private user
               _isLoading = false;
               sendBtn = true;
               international_amt=value;
               print(userType);
-              charges = responseDecode["msg"];
+              charges = responseDecode["info"];
 
               receiving_amt = "";
             }else{
@@ -535,11 +636,40 @@ class _UserTransferState extends State<UserTransfer> {
               international_amt=value;
               sendBtn = true;
               print(responseDecode);
-              charges = responseDecode["msg"];
+              charges = responseDecode["info"];
               final double recives_response =responseDecode["receiving_amount"];
               receiving_amt = "Receives $recives_response";
 
             }
+          });
+        }
+        else if(limit.contains("minimum")){
+          setState((){
+            _isLoading = false;
+            receiving_amt="";
+            sendBtn = false;
+            charges = responseDecode["msg"];
+          });
+        }else if(limit.contains("maximum")){
+          setState(() {
+            _isLoading = false;
+            sendBtn = false;
+            receiving_amt="";
+            charges = responseDecode["msg"];
+          });
+        }else if(limit.contains("insufficient")){
+          setState(() {
+            receiving_amt="";
+            _isLoading = false;
+            sendBtn = false;
+            charges = responseDecode["msg"];
+          });
+        }else{
+          setState(() {
+            _isLoading = false;
+            sendBtn = false;
+            receiving_amt="";
+            charges = responseDecode["msg"];
           });
         }
       }else{
@@ -655,18 +785,23 @@ class _UserTransferState extends State<UserTransfer> {
           context,
           MaterialPageRoute(builder: (context) =>const Success()),
         );
-      }else if(responseDecode["msg"]=="failed"){
-        // print("Transfer failed");
+      }else{
+        setState((){
+          receiving_amt="";
+          charges = responseDecode["msg"];
+        });
       }
     }else
     {
-      charges = responseDecode["msg"];
+      setState((){
+        charges = responseDecode["msg"];
+      });
     }
   }
 
   //Local Transfer method
   send_fund_local()async{
-    print("$lamount_charged $lsend_amount $username_receiver");
+    //print("$lamount_charged $lsend_amount $username_receiver");
     var serverUrl = Uri.parse("https://laravel.teletradeoptions.com/api/auth/local-transfer");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final prefs = sharedPreferences.getString("token");

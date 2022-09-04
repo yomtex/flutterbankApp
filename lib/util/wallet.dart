@@ -1,4 +1,7 @@
+import 'package:bankapp/payment/addfunds.dart';
 import 'package:flutter/material.dart';
+
+import '../pages/all_cards.dart';
 
 class Wallet extends StatelessWidget {
   final walletBalance;
@@ -21,8 +24,11 @@ class Wallet extends StatelessWidget {
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 13, vertical: 20),
-                  child: Icon(Icons.add),
-                )),
+                  child: IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: ()
+                      =>Navigator.push(context, MaterialPageRoute(builder: (context) => const AddFunds()),),
+                  ))),
           ],
         ),
         Row(

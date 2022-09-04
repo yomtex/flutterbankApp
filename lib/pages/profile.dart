@@ -2,7 +2,7 @@ import 'package:bankapp/pages/dashboard.dart';
 import 'package:bankapp/pages/transaction.dart';
 import 'package:bankapp/util/user_dialog.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_switch/flutter_switch.dart';
 
 class Profile extends StatefulWidget {
   Profile({Key? key}) : super(key: key);
@@ -380,6 +380,16 @@ class _ProfileState extends State<Profile> {
                                       color: Colors.black,
                                       fontSize: 18,
                                     ),
+                                  ),
+                                  FlutterSwitch(
+                                    activeColor: Colors.purple,
+                                    value: isSwitched,
+                                    onToggle: (value) {
+                                      print(value);
+                                      setState(() {
+                                        isSwitched = value;
+                                      });
+                                    },
                                   ),
                                   // CustomSwitch(
                                   //   value:isSwitched,

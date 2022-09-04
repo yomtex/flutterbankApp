@@ -83,8 +83,16 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
         MaterialPageRoute(builder: (BuildContext context) => const Login()),
             (Route<dynamic> route) => false);
 
-  }  @override
+  }
+
+  countTime ()async {
+    Timer(const Duration(minutes: 40), () {
+      logout();
+    });
+  }
+  @override
   void initState() {
+    countTime();
     getData();
     WidgetsBinding.instance.addObserver(this);
     super.initState();
@@ -103,19 +111,19 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        Timer(Duration(seconds: 60), () {
+        Timer(const Duration(seconds: 60), () {
           logout(); });
         break;
       case AppLifecycleState.detached:
-        Timer(Duration(seconds: 60), () {
+        Timer(const Duration(seconds: 60), () {
           logout(); });
         break;
       case AppLifecycleState.inactive:
-        Timer(Duration(seconds: 60), () {
+        Timer(const Duration(seconds: 60), () {
           logout(); });
         break;
       case AppLifecycleState.paused:
-        Timer(Duration(seconds: 60), () {
+        Timer(const Duration(seconds: 60), () {
           logout(); });
         break;
     }
@@ -161,7 +169,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Transaction()),
+                      MaterialPageRoute(builder: (context) => const Transaction()),
                     );
                   },
                 ),
@@ -231,6 +239,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
         ),
         body:_isLoading
             ? Scaffold(
+          backgroundColor: Colors.purple,
           body: Column(
             children: [
               SizedBox(height: MediaQuery.of(context).size.height/2.2,),
@@ -238,7 +247,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.purple),
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
                 ],
               ),
@@ -253,7 +262,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                 children: [
                   Container(
                     //main widget holding the position and distaince from red is too
-                    height: 245,
+                    height: 280,
                     width: MediaQuery.of(context).size.width,
                     decoration: const BoxDecoration(
                         //color: Colors.purple,
@@ -270,7 +279,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                             ),
                             width: MediaQuery.of(context).size.width,
                             //The widget the card float on
-                            height: 100.0,
+                            height: 130.0,
                           ),
                         ),
                         Positioned(
@@ -307,6 +316,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                             //height: 200.0,
                           ),
                         ),
+                        SizedBox(height: 15,)
                       ],
                     ),
                   ),

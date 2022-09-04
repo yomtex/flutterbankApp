@@ -123,8 +123,8 @@ class TransactionDetails extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text("Details"),
-                                Text(details==null?" ----":details),
+                                 const Text("Details"),
+                                Text(details ?? " ----"),
                               ],
                             ),
                           ),
@@ -145,12 +145,12 @@ class TransactionDetails extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 25,),
-                        TextButton(onPressed: (){
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (BuildContext context) => const Transaction()),
-                                  (Route<dynamic> route) => false);
+                        TextButton(onPressed: (){Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) =>const Transaction()),
+                        );
                         }, child: Container(
-                            decoration: const BoxDecoration(border: const Border(bottom: BorderSide(width: 1, color: Colors.grey))),
+                            decoration: const BoxDecoration(border:  Border(bottom: BorderSide(width: 1, color: Colors.grey))),
                             child: const Text("Back", style: TextStyle(color: Colors.black),))),
                       ],
                     ),
