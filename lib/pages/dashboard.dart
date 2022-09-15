@@ -11,6 +11,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../controller/login_status.dart';
+import '../payment/sendFunds.dart';
 import '../util/navbar.dart';
 import '../util/transactions.dart';
 import '../util/user_dialog.dart';
@@ -226,10 +227,15 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) => const UserTransfer()
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SendFunds()),
             );
+            // showDialog(
+            //     context: context,
+            //     builder: (BuildContext context) => const UserTransfer()
+            // );
           },
           child: const Icon(
             Icons.monetization_on_sharp,

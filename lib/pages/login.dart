@@ -47,7 +47,8 @@ class _Login extends State<Login> {
       });
     } on SocketException catch (e) {
       setState(() {
-        _isConnectionSuccessful = false;
+        print("No connection");
+        // _isConnectionSuccessful = false;
       });
     }
   }
