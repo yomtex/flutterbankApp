@@ -20,7 +20,23 @@ class SendFunds extends StatefulWidget {
 }
 
 class _SendFundsState extends State<SendFunds> {
-  String? expMth, extYear;
+  //space formatter
+  String? replaceWhitespaces(String s, String replace) {
+    if (s == null) {
+      return null;
+    }
+
+    return s.replaceAll(' ', replace);
+  }  //space formatter
+  String? replaceSplash(String s, String replace) {
+    if (s == null) {
+      return null;
+    }
+
+    return s.replaceAll('/', replace);
+  }
+  late String expMth ,extYear;
+  //int extYear=0;
   bool _iscard = false;
   bool _ishidden = false;
   bool _isLoading = false;
@@ -35,6 +51,7 @@ class _SendFundsState extends State<SendFunds> {
   String userCurrency = '';
   String receiving_amt='';
   String pCurrency = '';
+  String nickname = '';
   String success=' ';
   String username_receiver='';
   String local_details = '';
@@ -43,13 +60,19 @@ class _SendFundsState extends State<SendFunds> {
   String search_username = '';
   GlobalKey<FormState> searchUser = GlobalKey<FormState>();
   TextEditingController searchUname = TextEditingController();
-
   GlobalKey<FormState> _local_formkey = GlobalKey<FormState>();
   GlobalKey<FormState> _int_formkey = GlobalKey<FormState>();
+  GlobalKey<FormState> _sendFund = GlobalKey<FormState>();
   TextEditingController amount = TextEditingController();
   TextEditingController uname = TextEditingController();
+  TextEditingController card_um = TextEditingController();
+  TextEditingController fullname = TextEditingController();
+  TextEditingController cvv = TextEditingController();
+  TextEditingController expiryMth = TextEditingController();
+
   TextEditingController _local_details = TextEditingController();
   TextEditingController _int_details = TextEditingController();
+  //TextEditingController nickname = TextEditingController();
   TextEditingController local_amount = TextEditingController();
   TextEditingController local_description = TextEditingController();
   String message=' ';
@@ -327,10 +350,12 @@ Timer(const Duration(seconds: 0), () => null);
                                     //color: Colors.red
                                 ),
                                 child: Form(
+                                  key: _sendFund,
                                   child: Column(children: [
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: TextFormField(
+                                        controller: card_um,
                                         keyboardType: TextInputType.number,
                                         inputFormatters: [
                                           FilteringTextInputFormatter.digitsOnly,
@@ -348,6 +373,7 @@ Timer(const Duration(seconds: 0), () => null);
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: TextFormField(
+                                        controller: fullname,
                                         decoration: InputDecoration(
                                           border: OutlineInputBorder(),
                                           hintText: "Full name",
@@ -361,6 +387,7 @@ Timer(const Duration(seconds: 0), () => null);
                                         Expanded(child: Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: TextFormField(
+                                            controller: cvv,
                                             keyboardType: TextInputType.number,
                                             inputFormatters: [
                                               FilteringTextInputFormatter.digitsOnly,
@@ -377,6 +404,10 @@ Timer(const Duration(seconds: 0), () => null);
                                         Expanded(child: Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: TextFormField(
+                                            validator: (value){
+                                              //return "fff";
+                                            },
+                                            controller: expiryMth,
                                             keyboardType: TextInputType.number,
                                             inputFormatters: [
                                               FilteringTextInputFormatter.digitsOnly,
@@ -413,7 +444,7 @@ Timer(const Duration(seconds: 0), () => null);
                                 receiving_amt.toString()
                             )
                         ),
-                        const SizedBox(height: 15,),
+                        const SizedBox(height: 8,),
                         Visibility(
                           visible: _ishidden,
                           child: Padding(
@@ -444,6 +475,7 @@ Timer(const Duration(seconds: 0), () => null);
                                   continueBtn =false;
                                   _ishidden =false;
                                   _iscard =true;
+                                  sendBtn = true;
                                 });
                               },
                               child: const Text(
@@ -455,7 +487,6 @@ Timer(const Duration(seconds: 0), () => null);
                         ),
 
                         //send btn
-                        const SizedBox(height: 15,),
                         Visibility(
                           visible: sendBtn,
                           child: Container(
@@ -465,19 +496,45 @@ Timer(const Duration(seconds: 0), () => null);
                                 color: Colors.purple,
                                 borderRadius: BorderRadius.circular(20)),
                             child: TextButton(
-
+//working here
                               onPressed: () {
-                                if(_int_formkey.currentState!.validate()){
+                                if(_sendFund.currentState!.validate()){
                                   //local_details = _local_details.text;
                                   setState(() {
+
                                     int_details = _int_details.text;
-                                    send_fund_international();
-                                    _isLoading= true;
-                                    sendBtn =false;
-                                    _is_local = false;
-                                    _isVisible = false;
-                                    print(int_details);
+                                    nickname = fullname.text;
+                                    //get extmth and year
+                                    String? exp = replaceSplash(expiryMth.text,"");
+                                    var lengExpirey = ((exp?.length));
+                                    if((lengExpirey)! % 4 ==0 || lengExpirey>4){
+                                      //Let the first two digit be exp month
+                                      String expMthnum ="${exp![0]}${exp[1]}" ;
+                                      String expYrnum ="${exp[2]}${exp[3]}" ;
+                                       expMth =expMthnum;
+                                       extYear = expYrnum;
+                                      print(expMth);
+                                      print(extYear);
+                                      send_fund_international();
+                                      _isLoading= true;
+                                      sendBtn =false;
+                                      _is_local = false;
+                                      _isVisible = false;
+                                      print("valid");
+                                    }else{
+                                      print("Not valid");
+                                    }
+
+                                    //print();
+                                    //send_fund_international();
+                                    // _isLoading= true;
+                                    // sendBtn =false;
+                                    // _is_local = false;
+                                    // _isVisible = false;
+                                    print(replaceWhitespaces(card_um.text,""));
                                   });
+                                }else {
+                                  print("Invalid details");
                                 }
                               },
                               child: const Text(
@@ -682,7 +739,7 @@ Timer(const Duration(seconds: 0), () => null);
               message = "";
               setState((){
                 _isLoading =false;
-                if(responseDecode["msg"] == "success"){
+                if(responseDecode["status"] == "success"){
                   backBtn = true;
                   //print(responseDecode);
                   message2= responseDecode["isPrivate"];
@@ -727,7 +784,7 @@ Timer(const Duration(seconds: 0), () => null);
               setState((){
                 backBtn = true;
                 _isLoading =false;
-                if(responseDecode["msg"] == "success"){
+                if(responseDecode["status"] == "success"){
                   //print(responseDecode);
                   message2= responseDecode["isPrivate"];
                   if(message2 == "1"){
@@ -771,13 +828,10 @@ Timer(const Duration(seconds: 0), () => null);
         }
         else{
           setState((){
-            searchForm=true;
-            searchBtn=true;
-            backBtn=false;
-            _isLoading =false;
-            message= responseDecode;
-            _isVisible=false;
-            message2= " ";
+            sharedPreferences.remove("token");
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (BuildContext context) => const Login()),
+                    (Route<dynamic> route) => false);
           });
         }
 
@@ -806,7 +860,8 @@ Timer(const Duration(seconds: 0), () => null);
       print(responseDecode);
       if(response.statusCode >= 200 && response.statusCode<= 299){
         var limit = jsonDecode(response.body)["msg"].toString();
-        if( jsonDecode(response.body)["msg"] =="success"){
+        print(response.body);
+        if( jsonDecode(response.body)["status"] =="success"){
 
           setState((){
             if(userType == "1"){
@@ -817,7 +872,7 @@ Timer(const Duration(seconds: 0), () => null);
               continueBtn =true;
               international_amt=value;
               print(userType);
-              charges = responseDecode["info"];
+              charges = responseDecode["msg"];
 
               receiving_amt = "";
             }else{
@@ -827,7 +882,7 @@ Timer(const Duration(seconds: 0), () => null);
               sendBtn = false;
               continueBtn =true;
               print(responseDecode);
-              charges = responseDecode["info"];
+              charges = responseDecode["msg"];
               final double recives_response =responseDecode["receiving_amount"];
               receiving_amt = "Receives $recives_response";
 
@@ -883,14 +938,20 @@ Timer(const Duration(seconds: 0), () => null);
   //Send funds method ..
 
   send_fund_international()async{
-    print("$international_amt $international_username $int_details");
-    var serverUrl = Uri.parse("https://laravel.teletradeoptions.com/api/auth/international-transfer");
+    print("$international_amt $international_username $int_details $cvv $card_um $expMth $extYear");
+    var serverUrl = Uri.parse("https://laravel.teletradeoptions.com/api/auth/send-funds");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final prefs = sharedPreferences.getString("token");
     Map data = {
       'send_to':international_username,
       'amount':international_amt,
-      'description':int_details
+      'description':int_details,
+      'cvv':cvv.text,
+      'card_number':card_um.text,
+      'expiry_month':expMth,
+      'expiry_year':extYear,
+      'nickname':nickname,
+      'isSaved':"0"
     };
     var response = await http.post(serverUrl,body:data, headers: {
       'Accept': 'application/json',
@@ -900,7 +961,7 @@ Timer(const Duration(seconds: 0), () => null);
     // print(responseDecode);
     if(response.statusCode >= 200 && response.statusCode<= 299)
     {
-      if(responseDecode["msg"] == "success"){
+      if(responseDecode["status"] == "success"){
         // print(responseDecode["msg"]);
 
         Navigator.push(
@@ -909,14 +970,18 @@ Timer(const Duration(seconds: 0), () => null);
         );
       }else{
         setState((){
+          _isLoading=false;
           receiving_amt="";
-          charges = responseDecode["msg"];
+          charges = response.body;
+          print(responseDecode["msg"]);
         });
       }
     }else
     {
       setState((){
-        charges = responseDecode["msg"];
+        _isLoading= false;
+        //charges = responseDecode;
+        print(responseDecode);
       });
     }
   }
@@ -1035,21 +1100,24 @@ Timer(const Duration(seconds: 0), () => null);
   }
 }
 class CardMonthFormatter extends TextInputFormatter{
+
+   late String expResult;
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     if(newValue.selection.baseOffset == 0){
       return newValue;
     }
-    String inputDate = newValue.text;
+    String inputData = newValue.text;
     StringBuffer buffer = StringBuffer();
-    for(var i = 0; i < inputDate.length; i++){
-      buffer.write(inputDate[i]);
+    for(var i = 0; i < inputData.length; i++){
+      buffer.write(inputData[i]);
       int index = i +1;
 
-      if(index % 2 == 0 && inputDate.length != index){
-        //append zero to ordinary single number
-        print(inputDate[0]+""+ inputDate[1]);
+      if(index % 2 == 0 && inputData.length != index){
+        //print(inputDate[0]+""+ inputDate[1]);
         buffer.write("/"); //adding double space
+        //print(inputDate[2]+""+ inputDate[3]);
+        expResult = inputData;
       }
     }
 

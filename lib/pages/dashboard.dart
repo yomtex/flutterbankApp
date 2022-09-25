@@ -88,7 +88,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
 
   countTime ()async {
     Timer(const Duration(minutes: 40), () {
-      logout();
+      //logout();
     });
   }
   @override
@@ -322,18 +322,18 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                             //height: 200.0,
                           ),
                         ),
-                        SizedBox(height: 15,)
+                        //SizedBox(height: 15,)
                       ],
                     ),
                   ),
-                  const SizedBox(height: 30),
-
-                  const Padding(
-                    padding:  EdgeInsets.all(8.0),
-                    child:  Income(income_amt:"32300", expenses:"4030" ,),
-                  ),
-
-                  const SizedBox(height: 30),
+                  // const SizedBox(height: 30),
+                  //
+                  // const Padding(
+                  //   padding:  EdgeInsets.all(8.0),
+                  //   child:  Income(income_amt:"32300", expenses:"4030" ,),
+                  // ),
+                  //
+                  // const SizedBox(height: 30),
                   Container(
                     width: MediaQuery.of(context).size.width,
                     decoration: const BoxDecoration(

@@ -270,7 +270,7 @@ class _Login extends State<Login> {
       //print('data : ${response.body}');
       //print(response.body);
       var decode = jsonDecode(response.body);
-      var msg= decode["msg"];
+      var msg= decode["status"];
       if(msg == "success"){
         //getUser();
         setState((){
@@ -284,7 +284,7 @@ class _Login extends State<Login> {
       }else{
         setState((){
           appLoad=false;
-          message = "invalid credentials";
+          message = decode["msg"];;
           _isLoading = false;
         });
       }

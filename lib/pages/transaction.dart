@@ -92,7 +92,7 @@ class _TransactionState extends State<Transaction> {
               MaterialPageRoute(builder: (BuildContext context) => const Login()),
                   (Route<dynamic> route) => false);
         } else {
-          var msg = json.decode(response.body)["msg"];
+          var msg = json.decode(response.body)["status"];
           var  debit = json.decode(response.body)["data"];
           //transactions = mapResponse["msg"];
           if(msg == "success"){
@@ -120,6 +120,7 @@ class _TransactionState extends State<Transaction> {
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (BuildContext context) => const Login()),
                     (Route<dynamic> route) => false);
+            print(msg);
           }
         }
 

@@ -17,18 +17,19 @@ class Wallet extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text("Total Balance"),
-            Container(
-                decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 233, 216, 236),
-                    borderRadius: BorderRadius.circular(10)),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 13, vertical: 20),
-                  child: IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: ()
-                      =>Navigator.push(context, MaterialPageRoute(builder: (context) => const AddFunds()),),
-                  ))),
+            SizedBox(height:30),
+            // Container(
+            //     decoration: BoxDecoration(
+            //         color: Color.fromARGB(255, 233, 216, 236),
+            //         borderRadius: BorderRadius.circular(10)),
+            //     child: Padding(
+            //       padding:
+            //           const EdgeInsets.symmetric(horizontal: 13, vertical: 20),
+            //       child: IconButton(
+            //         icon: Icon(Icons.add),
+            //         onPressed: ()
+            //           =>Navigator.push(context, MaterialPageRoute(builder: (context) => const AddFunds()),),
+            //       ))),
           ],
         ),
         Row(
